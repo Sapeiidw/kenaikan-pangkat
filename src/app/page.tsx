@@ -1,3 +1,5 @@
+import { testTable } from "@/db/schema";
+import { db } from "@/lib/db";
 import { auth, currentUser } from "@clerk/nextjs/server";
 
 export default async function Page() {
@@ -12,6 +14,13 @@ export default async function Page() {
   // Get the Backend API User object when you need access to the user's information
   const user = await currentUser();
 
+  const dataTest = await db.select().from(testTable);
+
   // Use `user` to render user details or create UI elements
-  return <div>Welcome, {user?.firstName}!</div>;
+  return (
+    <div>
+      <div>Welcome, {user?.firstName}!</div>
+      <pre>{JSON.stringify(dataTest, null, 2)}</pre>
+    </div>
+  );
 }
