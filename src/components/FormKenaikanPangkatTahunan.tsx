@@ -170,11 +170,11 @@ export default function MyForm() {
           />
 
           {/* Detail Bulanan */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-6">
             {fields.map((field, index) => (
               <div
                 key={field.id}
-                className="border rounded-lg p-4 shadow-sm bg-white grid grid-flow-row gap-4"
+                className="border rounded-lg p-4 shadow-sm bg-white grid grid-flow-col gap-4"
               >
                 <h3 className="font-semibold capitalize">{field.bulan}</h3>
                 <FormField
