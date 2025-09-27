@@ -3,7 +3,10 @@ import { db } from "@/lib/db";
 import { eq, getTableColumns } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 
-export async function GET(_req: NextRequest, ctx: { params: { id: string } }) {
+export async function GET(
+  _req: NextRequest,
+  ctx: RouteContext<"/api/kenaikan-pangkat/[id]">
+) {
   const { id } = await ctx.params;
 
   const data = await db

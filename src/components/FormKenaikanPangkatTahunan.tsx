@@ -39,11 +39,11 @@ async function createDokumenKenaikanPangkat(
 export default function MyForm() {
   const mutation = useMutation({
     mutationFn: createDokumenKenaikanPangkat,
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast.success("Success! Create Dokumen Kenaikan Pangkat");
       form.reset();
     },
-    onError: (error) => {
+    onError: () => {
       toast.error("Failed to submit the form. Please try again.");
     },
   });

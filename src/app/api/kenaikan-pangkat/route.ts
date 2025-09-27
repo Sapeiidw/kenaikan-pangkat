@@ -9,7 +9,7 @@ import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
-  return new Response("Hello, Next.js!");
+  return new Response(`Hello, Next.js! ${req.url}`);
 }
 
 export async function POST(req: Request) {
