@@ -1,6 +1,6 @@
-import BarChartCustom from "@/components/chart/BarChart";
 import LineChartCustom from "@/components/chart/LineChart";
 import PieChartCustom from "@/components/chart/PieChart";
+import ChartTahunanDokumen from "@/components/ChartTahunanDokumen";
 import { testTable } from "@/db/schema";
 import { db } from "@/lib/db";
 import { UserButton } from "@clerk/nextjs";
@@ -69,35 +69,19 @@ export default async function Page() {
           <div className="w-full h-96 flex justify-center items-center bg-white p-4 rounded-2xl shadow">
             <PieChartCustom
               title="Status Kenaikan Pangkat"
-              data={[
-                { label: "Input Berkas", value: 7 },
-                { label: "Berkas Disimpan", value: 2 },
-                { label: "BTS", value: 2 },
-                { label: "Sudah TTD Pertek", value: 4 },
+              labels={[
+                "Input Berkas",
+                "Berkas Disimpan",
+                "BTS",
+                "Sudah TTD Pertek",
+                "TMS",
               ]}
-              field="value"
+              values={[7, 2, 2, 4, 1]}
             />
           </div>
         </div>
         <div className="w-full h-96 bg-white p-4 rounded-2xl shadow">
-          {/* <ChartTahunanDokumen /> */}
-          <BarChartCustom
-            title="Dokumen Bulanan"
-            data={[
-              { label: "Januari", berhasil: 12, tidak: 1 },
-              { label: "Februari", berhasil: 14, tidak: 1 },
-              { label: "Maret", berhasil: 8, tidak: 2 },
-              { label: "April", berhasil: 9, tidak: 3 },
-              { label: "Mei", berhasil: 11, tidak: 1 },
-              { label: "Juni", berhasil: 10, tidak: 2 },
-              { label: "Juli", berhasil: 9, tidak: 1 },
-              { label: "Agustus", berhasil: 12, tidak: 0 },
-              { label: "September", berhasil: 13, tidak: 0 },
-              { label: "Oktober", berhasil: 6, tidak: 1 },
-              { label: "November", berhasil: 4, tidak: 2 },
-              { label: "December", berhasil: 9, tidak: 3 },
-            ]}
-          />
+          <ChartTahunanDokumen />
         </div>
 
         {/* Three-column section */}
@@ -105,34 +89,28 @@ export default async function Page() {
           <div className="w-full h-auto flex justify-center items-center bg-white p-4 rounded-2xl shadow">
             <PieChartCustom
               title="Dokumen Terverifikasi - Bulan Mei"
-              data={[
-                { label: "Terverifikasi", value: 15 },
-                { label: "Tidak Memenuhi Syarat", value: 3 },
-              ]}
-              field="value"
+              labels={["Terverifikasi", "Tidak Memenuhi Syarat"]}
+              values={[15, 3]}
             />
           </div>
           <div className="w-full h-auto flex justify-center items-center bg-white p-4 rounded-2xl shadow">
             <PieChartCustom
               title="Status Kenaikan Pangkat"
-              data={[
-                { label: "Input Berkas", value: 7 },
-                { label: "Berkas Disimpan", value: 2 },
-                { label: "BTS", value: 2 },
-                { label: "Sudah TTD Pertek", value: 4 },
-                { label: "TMS", value: 1 },
+              labels={[
+                "Input Berkas",
+                "Berkas Disimpan",
+                "BTS",
+                "Sudah TTD Pertek",
+                "TMS",
               ]}
-              field="value"
+              values={[7, 2, 2, 4, 1]}
             />
           </div>
           <div className="w-full h-auto flex justify-center items-center bg-white p-4 rounded-2xl shadow">
             <PieChartCustom
               title="Status SK Kenaikan Pangkat - Bulan Mei"
-              data={[
-                { label: "Sudah TTD Pertek", value: 15 },
-                { label: "Belum TTD Pertek", value: 3 },
-              ]}
-              field="value"
+              labels={["Sudah TTD Pertek", "Belum TTD Pertek"]}
+              values={[15, 3]}
             />
           </div>
         </div>
