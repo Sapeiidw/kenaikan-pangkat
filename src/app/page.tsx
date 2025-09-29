@@ -99,7 +99,7 @@ export default async function Page() {
 
         {/* Three-column section */}
 
-        <div className="w-full h-auto flex justify-center items-center bg-white p-4 rounded-2xl shadow">
+        <div className="w-full h-100 col-span-4 flex justify-center items-center bg-white p-4 rounded-2xl shadow">
           <PieChartCustom
             title="Dokumen Terverifikasi - Bulan Mei"
             data={[
@@ -109,7 +109,7 @@ export default async function Page() {
             field="value"
           />
         </div>
-        <div className="w-full h-auto flex justify-center items-center bg-white p-4 rounded-2xl shadow">
+        <div className="w-full h-100 col-span-4 flex justify-center items-center bg-white p-4 rounded-2xl shadow">
           <PieChartCustom
             title="Status Kenaikan Pangkat"
             data={[
@@ -122,7 +122,7 @@ export default async function Page() {
             field="value"
           />
         </div>
-        <div className="w-full h-auto flex justify-center items-center bg-white p-4 rounded-2xl shadow">
+        <div className="w-full h-100 col-span-4 flex justify-center items-center bg-white p-4 rounded-2xl shadow">
           <PieChartCustom
             title="Status SK Kenaikan Pangkat - Bulan Mei"
             data={[
