@@ -45,42 +45,39 @@ export default async function Page() {
         <h1 className="text-xl">MAMANK US</h1>
         <UserButton showName />
       </div>
-      <div className="grid grid-flow-row gap-4 bg-neutral-200 p-8">
-        <div className="grid grid-cols-3 gap-4">
-          <div className="w-full h-96 col-span-2 bg-white p-4 rounded-2xl shadow">
-            <LineChartCustom
-              title="Jumlah Pegawai Per Bulan"
-              data={[
-                { label: "Januari", value: 13 },
-                { label: "Februari", value: 15 },
-                { label: "Maret", value: 10 },
-                { label: "April", value: 12 },
-                { label: "Mei", value: 12 },
-                { label: "Juni", value: 12 },
-                { label: "Juli", value: 8 },
-                { label: "Agustus", value: 12 },
-                { label: "September", value: 13 },
-                { label: "Oktober", value: 7 },
-                { label: "November", value: 6 },
-                { label: "Desember", value: 12 },
-              ]}
-            />
-          </div>
-          <div className="w-full h-96 flex justify-center items-center bg-white p-4 rounded-2xl shadow">
-            <PieChartCustom
-              title="Status Kenaikan Pangkat"
-              data={[
-                { label: "Input Berkas", value: 7 },
-                { label: "Berkas Disimpan", value: 2 },
-                { label: "BTS", value: 2 },
-                { label: "Sudah TTD Pertek", value: 4 },
-              ]}
-              field="value"
-            />
-          </div>
+      <div className="grid grid-cols-12 gap-4 bg-neutral-200 p-8">
+        <div className="w-full h-96 col-span-8 bg-white p-4 rounded-2xl shadow">
+          <LineChartCustom
+            title="Jumlah Pegawai Per Bulan"
+            data={[
+              { label: "Januari", value: 13 },
+              { label: "Februari", value: 15 },
+              { label: "Maret", value: 10 },
+              { label: "April", value: 12 },
+              { label: "Mei", value: 12 },
+              { label: "Juni", value: 12 },
+              { label: "Juli", value: 8 },
+              { label: "Agustus", value: 12 },
+              { label: "September", value: 13 },
+              { label: "Oktober", value: 7 },
+              { label: "November", value: 6 },
+              { label: "Desember", value: 12 },
+            ]}
+          />
         </div>
-        <div className="w-full h-96 bg-white p-4 rounded-2xl shadow">
-          {/* <ChartTahunanDokumen /> */}
+        <div className="w-full h-96 col-span-4 flex justify-center items-center bg-white p-4 rounded-2xl shadow">
+          <PieChartCustom
+            title="Status Kenaikan Pangkat"
+            data={[
+              { label: "Input Berkas", value: 7 },
+              { label: "Berkas Disimpan", value: 2 },
+              { label: "BTS", value: 2 },
+              { label: "Sudah TTD Pertek", value: 4 },
+            ]}
+            field="value"
+          />
+        </div>
+        <div className="w-full h-96 col-span-full bg-white p-4 rounded-2xl shadow">
           <BarChartCustom
             title="Dokumen Bulanan"
             data={[
@@ -101,40 +98,39 @@ export default async function Page() {
         </div>
 
         {/* Three-column section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="w-full h-auto flex justify-center items-center bg-white p-4 rounded-2xl shadow">
-            <PieChartCustom
-              title="Dokumen Terverifikasi - Bulan Mei"
-              data={[
-                { label: "Terverifikasi", value: 15 },
-                { label: "Tidak Memenuhi Syarat", value: 3 },
-              ]}
-              field="value"
-            />
-          </div>
-          <div className="w-full h-auto flex justify-center items-center bg-white p-4 rounded-2xl shadow">
-            <PieChartCustom
-              title="Status Kenaikan Pangkat"
-              data={[
-                { label: "Input Berkas", value: 7 },
-                { label: "Berkas Disimpan", value: 2 },
-                { label: "BTS", value: 2 },
-                { label: "Sudah TTD Pertek", value: 4 },
-                { label: "TMS", value: 1 },
-              ]}
-              field="value"
-            />
-          </div>
-          <div className="w-full h-auto flex justify-center items-center bg-white p-4 rounded-2xl shadow">
-            <PieChartCustom
-              title="Status SK Kenaikan Pangkat - Bulan Mei"
-              data={[
-                { label: "Sudah TTD Pertek", value: 15 },
-                { label: "Belum TTD Pertek", value: 3 },
-              ]}
-              field="value"
-            />
-          </div>
+
+        <div className="w-full h-auto flex justify-center items-center bg-white p-4 rounded-2xl shadow">
+          <PieChartCustom
+            title="Dokumen Terverifikasi - Bulan Mei"
+            data={[
+              { label: "Terverifikasi", value: 15 },
+              { label: "Tidak Memenuhi Syarat", value: 3 },
+            ]}
+            field="value"
+          />
+        </div>
+        <div className="w-full h-auto flex justify-center items-center bg-white p-4 rounded-2xl shadow">
+          <PieChartCustom
+            title="Status Kenaikan Pangkat"
+            data={[
+              { label: "Input Berkas", value: 7 },
+              { label: "Berkas Disimpan", value: 2 },
+              { label: "BTS", value: 2 },
+              { label: "Sudah TTD Pertek", value: 4 },
+              { label: "TMS", value: 1 },
+            ]}
+            field="value"
+          />
+        </div>
+        <div className="w-full h-auto flex justify-center items-center bg-white p-4 rounded-2xl shadow">
+          <PieChartCustom
+            title="Status SK Kenaikan Pangkat - Bulan Mei"
+            data={[
+              { label: "Sudah TTD Pertek", value: 15 },
+              { label: "Belum TTD Pertek", value: 3 },
+            ]}
+            field="value"
+          />
         </div>
       </div>
     </>
