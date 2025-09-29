@@ -27,7 +27,11 @@ export const columns: ColumnDef<KenaikanPangkat>[] = [
     header: "Nama OPD",
   },
   {
-    accessorKey: "value",
-    header: "Value",
+    accessorKey: "berhasil",
+    header: "Berhasil",
+  },
+  {
+    accessorKey: "tidak_berhasil",
+    header: "Tidak Berhasil",
   },
 ];
