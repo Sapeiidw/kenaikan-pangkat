@@ -122,7 +122,7 @@ export default function Page() {
 
   return (
     <div className="max-w-1/2 mx-auto p-4 flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Kenaikan Pangkat</h1>
+      <h1 className="text-2xl font-bold">Status Dokumen</h1>
       <FormStatusDokumen
         initialData={init}
         onSuccess={() =>
