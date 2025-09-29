@@ -1,7 +1,9 @@
 import { Provider } from "@/components/Provider";
 import { Toaster } from "@/components/ui/sonner";
+import { UserButton } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Link from "next/link";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -30,6 +32,21 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased bg-neutral-200`}
         >
+          <div className="flex justify-between items-center px-8 py-2 gap-4 sticky top-0 w-full bg-white shadow">
+            <h1 className="text-xl">MAMANK US</h1>
+            <div className="flex gap-8">
+              <Link href="/disdik" className="text-sm">
+                DISDIK
+              </Link>
+              <Link href="/dinkes" className="text-sm">
+                DINKES
+              </Link>
+              <Link href="/rsud" className="text-sm">
+                RSUD
+              </Link>
+            </div>
+            <UserButton showName />
+          </div>
           {children}
           <Toaster />
         </body>
