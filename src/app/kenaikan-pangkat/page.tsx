@@ -2,81 +2,23 @@
 
 import { Button } from "@/components/ui/button";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { ColumnDef } from "@tanstack/react-table";
+import { MoreHorizontal } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
-import z4 from "zod/v4";
-import { columns } from "./columns";
 import { DataTable } from "./data-table";
-
-// ✅ Schema with coercion for all number fields
-export const formSchema = z4.object({
-  tahun: z4.coerce.number<number>().min(2000, "Minimal tahun 2000"),
-  bulan: z4.string().min(1, "Bulan tidak boleh kosong"),
-  id_opd: z4.coerce.number<number>().min(1, "OPD harus dipilih"),
-  berhasil: z4.coerce.number<number>().min(0),
-  tidak_berhasil: z4.coerce.number<number>().min(0),
-});
-
-type FormData = z4.infer<typeof formSchema>;
-
-export async function createKenaikanPangkat(data: z4.infer<typeof formSchema>) {
-  const response = await fetch("/api/kenaikan-pangkat", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-
-  if (!response.ok) {
-    const errorBody = await response.text();
-    throw new Error(`Failed to create: ${response.status} - ${errorBody}`);
-  }
-
-  return response.json();
-}
+import { FormKenaikanPangkat } from "./form";
 
 export default function Page() {
-  const mutation = useMutation({
-    mutationFn: createKenaikanPangkat,
-    onSuccess: () => {
-      toast.success("Success! Create Dokumen Kenaikan Pangkat");
-      form.reset();
-    },
-    onError: () => {
-      toast.error("Failed to submit the form. Please try again.");
-    },
-  });
-
-  const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      tahun: new Date().getFullYear(),
-      bulan: "",
-      id_opd: 0,
-      berhasil: 0,
-      tidak_berhasil: 0,
-    },
-  });
-
-  const onSubmit = async (data: FormData) => {
-    mutation.mutate(data);
-  };
-
-  const { data: dataOpd } = useQuery({
-    queryKey: ["opd"],
-    queryFn: async () => await fetch(`/api/opd`).then((res) => res.json()),
-  });
+  const queryClient = useQueryClient();
 
   const { data } = useQuery({
     queryKey: ["kenaikan-pangkat"],
@@ -84,92 +26,110 @@ export default function Page() {
       await fetch(`/api/kenaikan-pangkat`).then((res) => res.json()),
   });
 
+  const deleteMutation = useMutation({
+    mutationKey: ["delete-kenaikan-pangkat"],
+    mutationFn: async () => {
+      const res = await fetch(`/api/kenaikan-pangkat/${init.id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to delete");
+      return res.json();
+    },
+    onSuccess: () => {
+      toast.success("Data berhasil dihapus");
+      queryClient.invalidateQueries({ queryKey: ["kenaikan-pangkat"] });
+    },
+    onError: () => {
+      toast.error("Gagal menghapus data");
+    },
+  });
+
+  const [init, setInit] = useState<KenaikanPangkat>({
+    id: null,
+    tahun: new Date().getFullYear(),
+    bulan: "",
+    id_opd: 0,
+    nama_opd: "",
+    value: 0,
+  });
+
+  type KenaikanPangkat = {
+    id: number | null;
+    tahun: number;
+    bulan: string;
+    id_opd: number;
+    nama_opd: string;
+    value: number;
+  };
+  const columns: ColumnDef<KenaikanPangkat>[] = [
+    {
+      accessorKey: "tahun",
+      header: "Tahun",
+    },
+    {
+      accessorKey: "bulan",
+      header: "Bulan",
+    },
+    {
+      accessorKey: "nama_opd",
+      header: "Nama OPD",
+    },
+    {
+      accessorKey: "value",
+      header: "Value",
+    },
+    {
+      id: "actions",
+      cell: ({ row }) => {
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText(row.id)}
+              >
+                Copy ID
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => setInit(row.original)}>
+                Edit Data
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  deleteMutation.mutate();
+                }}
+              >
+                Hapus Data
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
+
   return (
     <div className="max-w-1/2 mx-auto p-4 flex flex-col gap-4">
       <h1 className="text-2xl font-bold">Kenaikan Pangkat</h1>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-6 mx-auto bg-white p-6 rounded-md shadow w-full"
-        >
-          <FormField
-            name="tahun"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Tahun</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="Contoh: 2025"
-                    {...field}
-                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            name="bulan"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Bulan</FormLabel>
-                <FormControl>
-                  <Input placeholder="Contoh: Januari" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="id_opd"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>OPD</FormLabel>
-                <FormControl>
-                  <select
-                    {...field}
-                    className="w-full rounded border px-3 py-2 text-sm"
-                  >
-                    <option value="">Pilih OPD</option>
-                    {dataOpd &&
-                      dataOpd?.map(
-                        (opd: {
-                          id: number;
-                          nama: string;
-                          singatan: string;
-                        }) => (
-                          <option key={opd.id} value={opd.id}>
-                            {opd.nama}
-                          </option>
-                        )
-                      )}
-                  </select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            name="value"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Value</FormLabel>
-                <FormControl>
-                  <Input type="number" placeholder="0" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <Button type="submit">Simpan</Button>
-        </form>
-      </Form>
+      <FormKenaikanPangkat
+        initialData={init}
+        onSuccess={() =>
+          setInit({
+            id: null,
+            tahun: new Date().getFullYear(),
+            bulan: "",
+            id_opd: 0,
+            nama_opd: "",
+            value: 0,
+          })
+        }
+      />
       {data && <DataTable columns={columns} data={data} />}
     </div>
   );
