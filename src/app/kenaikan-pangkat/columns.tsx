@@ -10,8 +10,7 @@ export type KenaikanPangkat = {
   bulan: string;
   id_opd: number;
   nama_opd: string;
-  berhasil: number;
-  tidak_berhasil: number;
+  value: number;
 };
 
 export const columns: ColumnDef<KenaikanPangkat>[] = [
@@ -28,11 +27,7 @@ export const columns: ColumnDef<KenaikanPangkat>[] = [
     header: "Nama OPD",
   },
   {
-    accessorKey: "berhasil",
-    header: "Berhasil",
-  },
-  {
-    accessorKey: "tidak_berhasil",
-    header: "Tidak Berhasil",
+    accessorKey: "value",
+    header: "Value",
   },
 ];
