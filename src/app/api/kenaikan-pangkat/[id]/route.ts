@@ -6,12 +6,13 @@ import { NextRequest } from "next/server";
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  ctx: RouteContext<"/api/kenaikan-pangkat/[id]">
 ) {
-  const id = parseInt(params.id);
+  const { id } = await ctx.params;
   const body = await req.json();
 
-  if (isNaN(id)) {
+  const parsedId = parseInt(id);
+  if (isNaN(parsedId)) {
     return new Response(JSON.stringify({ error: "Invalid ID" }), {
       status: 400,
       headers: { "Content-Type": "application/json" },
@@ -21,7 +22,7 @@ export async function PUT(
   const updated = await db
     .update(kenaikan_pangkat)
     .set(body)
-    .where(eq(kenaikan_pangkat.id, id))
+    .where(eq(kenaikan_pangkat.id, parsedId))
     .returning();
 
   if (updated.length === 0) {
@@ -39,12 +40,13 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  ctx: RouteContext<"/api/kenaikan-pangkat/[id]">
 ) {
   try {
-    const id = parseInt(params.id);
+    const { id } = await ctx.params;
 
-    if (isNaN(id)) {
+    const parsedId = parseInt(id);
+    if (isNaN(parsedId)) {
       return new Response(JSON.stringify({ error: "Invalid ID" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
@@ -53,7 +55,7 @@ export async function DELETE(
 
     const deleted = await db
       .delete(kenaikan_pangkat)
-      .where(eq(kenaikan_pangkat.id, id))
+      .where(eq(kenaikan_pangkat.id, parsedId))
       .returning();
 
     if (deleted.length === 0) {
