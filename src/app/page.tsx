@@ -45,7 +45,24 @@ export default async function Page() {
       value: sql<number>`SUM(kenaikan_pangkat.value)`.as("value"),
     })
     .from(kenaikan_pangkat)
-    .groupBy(kenaikan_pangkat.tahun, kenaikan_pangkat.bulan);
+    .groupBy(kenaikan_pangkat.tahun, kenaikan_pangkat.bulan)
+    .orderBy(
+      sql`CASE 
+      WHEN ${kenaikan_pangkat.bulan} = 'Januari' THEN 1
+      WHEN ${kenaikan_pangkat.bulan} = 'Februari' THEN 2
+      WHEN ${kenaikan_pangkat.bulan} = 'Maret' THEN 3
+      WHEN ${kenaikan_pangkat.bulan} = 'April' THEN 4
+      WHEN ${kenaikan_pangkat.bulan} = 'Mei' THEN 5
+      WHEN ${kenaikan_pangkat.bulan} = 'Juni' THEN 6
+      WHEN ${kenaikan_pangkat.bulan} = 'Juli' THEN 7
+      WHEN ${kenaikan_pangkat.bulan} = 'Agustus' THEN 8
+      WHEN ${kenaikan_pangkat.bulan} = 'September' THEN 9
+      WHEN ${kenaikan_pangkat.bulan} = 'Oktober' THEN 10
+      WHEN ${kenaikan_pangkat.bulan} = 'November' THEN 11
+      WHEN ${kenaikan_pangkat.bulan} = 'Desember' THEN 12
+      ELSE 13
+    END`
+    );
 
   const dataStatusDokumen = await db
     .select({
@@ -56,7 +73,24 @@ export default async function Page() {
       ),
     })
     .from(status_dokumen)
-    .groupBy(status_dokumen.tahun, status_dokumen.bulan);
+    .groupBy(status_dokumen.tahun, status_dokumen.bulan)
+    .orderBy(
+      sql`CASE 
+      WHEN ${status_dokumen.bulan} = 'Januari' THEN 1
+      WHEN ${status_dokumen.bulan} = 'Februari' THEN 2
+      WHEN ${status_dokumen.bulan} = 'Maret' THEN 3
+      WHEN ${status_dokumen.bulan} = 'April' THEN 4
+      WHEN ${status_dokumen.bulan} = 'Mei' THEN 5
+      WHEN ${status_dokumen.bulan} = 'Juni' THEN 6
+      WHEN ${status_dokumen.bulan} = 'Juli' THEN 7
+      WHEN ${status_dokumen.bulan} = 'Agustus' THEN 8
+      WHEN ${status_dokumen.bulan} = 'September' THEN 9
+      WHEN ${status_dokumen.bulan} = 'Oktober' THEN 10
+      WHEN ${status_dokumen.bulan} = 'November' THEN 11
+      WHEN ${status_dokumen.bulan} = 'Desember' THEN 12
+      ELSE 13
+    END`
+    );
   // Use `user` to render user details or create UI elements
   return (
     <>
