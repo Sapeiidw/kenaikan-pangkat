@@ -29,8 +29,8 @@ export const formSchema = z4.object({
 
 type FormData = z4.infer<typeof formSchema>;
 
-export async function createKenaikanPangkat(data: z4.infer<typeof formSchema>) {
-  const response = await fetch("/api/kenaikan-pangkat", {
+export async function createStatusDokumen(data: z4.infer<typeof formSchema>) {
+  const response = await fetch("/api/status-dokumen", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -48,9 +48,9 @@ export async function createKenaikanPangkat(data: z4.infer<typeof formSchema>) {
 
 export default function Page() {
   const mutation = useMutation({
-    mutationFn: createKenaikanPangkat,
+    mutationFn: createStatusDokumen,
     onSuccess: () => {
-      toast.success("Success! Create Dokumen Kenaikan Pangkat");
+      toast.success("Success! Create Status Dokumen");
       form.reset();
     },
     onError: () => {
@@ -79,14 +79,14 @@ export default function Page() {
   });
 
   const { data } = useQuery({
-    queryKey: ["kenaikan-pangkat"],
+    queryKey: ["status-dokumen"],
     queryFn: async () =>
-      await fetch(`/api/kenaikan-pangkat`).then((res) => res.json()),
+      await fetch(`/api/status-dokumen`).then((res) => res.json()),
   });
 
   return (
     <div className="max-w-1/2 mx-auto p-4 flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Kenaikan Pangkat</h1>
+      <h1 className="text-2xl font-bold">Status Dokumen</h1>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -155,10 +155,23 @@ export default function Page() {
           />
 
           <FormField
-            name="value"
+            name="berhasil"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Value</FormLabel>
+                <FormLabel>Berhasil</FormLabel>
+                <FormControl>
+                  <Input type="number" placeholder="0" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            name="tidak_berhasil"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Tidak Berhasil</FormLabel>
                 <FormControl>
                   <Input type="number" placeholder="0" {...field} />
                 </FormControl>
