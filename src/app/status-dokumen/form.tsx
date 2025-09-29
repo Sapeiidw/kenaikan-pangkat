@@ -42,8 +42,8 @@ export function FormStatusDokumen({
     mutationFn: async (data: FormData) => {
       const method = data.id ? "PUT" : "POST";
       const url = data.id
-        ? `/api/kenaikan-pangkat/${data.id}`
-        : "/api/kenaikan-pangkat";
+        ? `/api/status-dokumen/${data.id}`
+        : "/api/status-dokumen";
 
       const response = await fetch(url, {
         method,
@@ -60,7 +60,7 @@ export function FormStatusDokumen({
     onSuccess: () => {
       toast.success(initialData ? "Update berhasil!" : "Data berhasil dibuat!");
       form.reset();
-      queryClient.invalidateQueries({ queryKey: ["kenaikan-pangkat"] });
+      queryClient.invalidateQueries({ queryKey: ["status-dokumen"] });
       onSuccess?.();
     },
     onError: () => {

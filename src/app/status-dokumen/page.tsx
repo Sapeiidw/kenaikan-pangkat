@@ -21,15 +21,15 @@ export default function Page() {
   const queryClient = useQueryClient();
 
   const { data } = useQuery({
-    queryKey: ["kenaikan-pangkat"],
+    queryKey: ["status-dokumen"],
     queryFn: async () =>
-      await fetch(`/api/kenaikan-pangkat`).then((res) => res.json()),
+      await fetch(`/api/status-dokumen`).then((res) => res.json()),
   });
 
   const deleteMutation = useMutation({
-    mutationKey: ["delete-kenaikan-pangkat"],
+    mutationKey: ["delete-status-dokumen"],
     mutationFn: async () => {
-      const res = await fetch(`/api/kenaikan-pangkat/${init.id}`, {
+      const res = await fetch(`/api/status-dokumen/${init.id}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed to delete");
@@ -37,7 +37,7 @@ export default function Page() {
     },
     onSuccess: () => {
       toast.success("Data berhasil dihapus");
-      queryClient.invalidateQueries({ queryKey: ["kenaikan-pangkat"] });
+      queryClient.invalidateQueries({ queryKey: ["status-dokumen"] });
     },
     onError: () => {
       toast.error("Gagal menghapus data");
