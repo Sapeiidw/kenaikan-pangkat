@@ -1,17 +1,12 @@
 import BarChartCustom from "@/components/chart/BarChart";
 import LineChartCustom from "@/components/chart/LineChart";
 import PieChartCustom from "@/components/chart/PieChart";
-import { kenaikan_pangkat, status_dokumen, testTable } from "@/db/schema";
+import { kenaikan_pangkat, status_dokumen } from "@/db/schema";
 import { db } from "@/lib/db";
-import { auth, currentUser } from "@clerk/nextjs/server";
 import { eq, sql } from "drizzle-orm";
-import Link from "next/link";
 
 export default async function Page() {
   // Get the Backend API User object when you need access to the user's information
-  const user = await currentUser();
-
-  const dataTest = await db.select().from(testTable);
 
   const dataKenaikanPangkat = await db
     .select({

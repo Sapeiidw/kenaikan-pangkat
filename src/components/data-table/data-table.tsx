@@ -2,7 +2,6 @@
 
 import {
   ColumnDef,
-  ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -20,11 +19,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DataTablePagination } from "./pagination";
-import { Separator } from "../ui/separator";
-import { DataTableViewOptions } from "./column-toggle";
 import { useState } from "react";
 import { Input } from "../ui/input";
+import { Separator } from "../ui/separator";
+import { DataTableViewOptions } from "./column-toggle";
+import { DataTablePagination } from "./pagination";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

@@ -1,6 +1,15 @@
 "use client";
 
+import { DataTable } from "@/components/data-table/data-table";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,15 +24,6 @@ import { MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { FormStatusDokumen } from "./form";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { DataTable } from "@/components/data-table/data-table";
 
 export default function Page() {
   const queryClient = useQueryClient();
@@ -62,11 +62,6 @@ export default function Page() {
     berhasil: 0,
     tidak_berhasil: 0,
   });
-
-  const FormEdit = (data: StatusDokumen) => {
-    setIsOpenForm(true);
-    setInit(data);
-  };
 
   type StatusDokumen = {
     id: number | null;
