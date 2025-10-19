@@ -100,7 +100,10 @@ export default async function Page() {
         )}
       </div>
 
-      {/* Three-column section */}
+      <div className="col-span-full bg-white flex justify-between items-center p-4 rounded-2xl shadow">
+        <h1 className="text-lg">Bulanan</h1>
+        <YearPicker initialYear={new Date().getFullYear().toString()} />
+      </div>
 
       <div className="w-full h-100 col-span-4 flex justify-center items-center bg-white p-4 rounded-2xl shadow">
         <PieChartCustom

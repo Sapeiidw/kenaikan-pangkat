@@ -164,7 +164,7 @@ export function FormKenaikanPangkat({
           name="value"
           render={({ field }) => (
             <FormItem className="col-span-full">
-              <FormLabel>Value</FormLabel>
+              <FormLabel>Kenaikan Pangkat</FormLabel>
               <FormControl>
                 <Input type="number" placeholder="0" {...field} />
               </FormControl>

@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import {
   AudioWaveform,
   BookOpen,
@@ -13,11 +12,10 @@ import {
   Settings2,
   SquareTerminal,
 } from "lucide-react";
+import * as React from "react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavProjects } from "@/components/nav-projects";
-import { NavUser } from "@/components/nav-user";
-import { TeamSwitcher } from "@/components/team-switcher";
 import {
   Sidebar,
   SidebarContent,
@@ -29,9 +27,9 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { usePathname } from "next/navigation";
-import { UserButton } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
+import { UserButton } from "@clerk/nextjs";
+import { usePathname } from "next/navigation";
 
 // This is sample data.
 const data = {
@@ -99,8 +97,28 @@ const data = {
           url: "/rsud",
         },
         {
-          title: "Tambah Data",
-          url: "/rsud/tambah-data",
+          title: "Kenaikan Pangkat",
+          url: "/rsud/kenaikan-pangkat",
+        },
+        {
+          title: "Status Dokumen Wajib",
+          url: "/rsud/status-dokumen-wajib",
+        },
+        {
+          title: "Golongan Pegawai",
+          url: "/rsud/golongan-pegawai",
+        },
+        {
+          title: "Status SK Kenpa",
+          url: "/rsud/status-sk-kenpa",
+        },
+        {
+          title: "Status Kenaikan Pangkat",
+          url: "/rsud/status-kenaikan-pangkat",
+        },
+        {
+          title: "Status Pegawai",
+          url: "/rsud/pegawai",
         },
       ],
     },
@@ -167,7 +185,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     });
   }, [pathname]);
 
-  const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
+  const { state } = useSidebar();
 
   return (
     <Sidebar collapsible="icon" {...props}>
