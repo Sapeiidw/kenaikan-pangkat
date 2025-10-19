@@ -14,22 +14,30 @@ import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { DataTable } from "./data-table";
-import { FormKenaikanPangkat } from "./form";
+import { FormStatusDokumen } from "./form";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { DataTable } from "@/components/data-table/data-table";
 
 export default function Page() {
   const queryClient = useQueryClient();
 
   const { data } = useQuery({
-    queryKey: ["kenaikan-pangkat"],
+    queryKey: ["status-dokumen"],
     queryFn: async () =>
-      await fetch(`/api/kenaikan-pangkat`).then((res) => res.json()),
+      await fetch(`/api/status-dokumen`).then((res) => res.json()),
   });
 
   const deleteMutation = useMutation({
-    mutationKey: ["delete-kenaikan-pangkat"],
+    mutationKey: ["delete-status-dokumen"],
     mutationFn: async () => {
-      const res = await fetch(`/api/kenaikan-pangkat/${init.id}`, {
+      const res = await fetch(`/api/status-dokumen/${init.id}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed to delete");
@@ -37,31 +45,39 @@ export default function Page() {
     },
     onSuccess: () => {
       toast.success("Data berhasil dihapus");
-      queryClient.invalidateQueries({ queryKey: ["kenaikan-pangkat"] });
+      queryClient.invalidateQueries({ queryKey: ["status-dokumen"] });
     },
     onError: () => {
       toast.error("Gagal menghapus data");
     },
   });
 
-  const [init, setInit] = useState<KenaikanPangkat>({
+  const [isOpenForm, setIsOpenForm] = useState(false);
+  const [init, setInit] = useState<StatusDokumen>({
     id: null,
     tahun: new Date().getFullYear(),
     bulan: "",
     id_opd: 0,
     nama_opd: "",
-    value: 0,
+    berhasil: 0,
+    tidak_berhasil: 0,
   });
 
-  type KenaikanPangkat = {
+  const FormEdit = (data: StatusDokumen) => {
+    setIsOpenForm(true);
+    setInit(data);
+  };
+
+  type StatusDokumen = {
     id: number | null;
     tahun: number;
     bulan: string;
     id_opd: number;
     nama_opd: string;
-    value: number;
+    berhasil: number;
+    tidak_berhasil: number;
   };
-  const columns: ColumnDef<KenaikanPangkat>[] = [
+  const columns: ColumnDef<StatusDokumen>[] = [
     {
       accessorKey: "tahun",
       header: "Tahun",
@@ -75,8 +91,12 @@ export default function Page() {
       header: "Nama OPD",
     },
     {
-      accessorKey: "value",
-      header: "Value",
+      accessorKey: "berhasil",
+      header: "Berhasil",
+    },
+    {
+      accessorKey: "tidak_berhasil",
+      header: "Tidak Berhasil",
     },
     {
       id: "actions",
@@ -115,22 +135,36 @@ export default function Page() {
   ];
 
   return (
-    <div className="max-w-1/2 mx-auto p-4 flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Kenaikan Pangkat</h1>
-      <FormKenaikanPangkat
-        initialData={init}
-        onSuccess={() =>
-          setInit({
-            id: null,
-            tahun: new Date().getFullYear(),
-            bulan: "",
-            id_opd: 0,
-            nama_opd: "",
-            value: 0,
-          })
-        }
-      />
-      {data && <DataTable columns={columns} data={data} />}
-    </div>
+    <>
+      <h1 className="text-2xl font-bold col-span-full">Status Dokumen</h1>
+      <Dialog open={isOpenForm} onOpenChange={setIsOpenForm}>
+        <DialogTrigger asChild>
+          <Button onClick={() => setIsOpenForm(true)}>Add</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Form Status Dokumen</DialogTitle>
+            <DialogDescription>Tambahkan data status dokumen</DialogDescription>
+            <FormStatusDokumen
+              initialData={init}
+              onSuccess={() =>
+                setInit({
+                  id: null,
+                  tahun: new Date().getFullYear(),
+                  bulan: "",
+                  id_opd: 0,
+                  nama_opd: "",
+                  berhasil: 0,
+                  tidak_berhasil: 0,
+                })
+              }
+            />
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+      <div className="col-span-full">
+        {data && <DataTable columns={columns} data={data} />}
+      </div>
+    </>
   );
 }

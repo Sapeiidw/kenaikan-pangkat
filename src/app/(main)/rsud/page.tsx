@@ -1,17 +1,13 @@
 import BarChartCustom from "@/components/chart/BarChart";
 import LineChartCustom from "@/components/chart/LineChart";
 import PieChartCustom from "@/components/chart/PieChart";
-import { kenaikan_pangkat, status_dokumen, testTable } from "@/db/schema";
+import { YearPicker } from "@/components/year-picker";
+import { kenaikan_pangkat, status_dokumen } from "@/db/schema";
 import { db } from "@/lib/db";
-import { auth, currentUser } from "@clerk/nextjs/server";
-import { sql } from "drizzle-orm";
-import Link from "next/link";
+import { eq, sql } from "drizzle-orm";
 
 export default async function Page() {
   // Get the Backend API User object when you need access to the user's information
-  const user = await currentUser();
-
-  const dataTest = await db.select().from(testTable);
 
   const dataKenaikanPangkat = await db
     .select({
@@ -19,6 +15,7 @@ export default async function Page() {
       value: sql<number>`SUM(kenaikan_pangkat.value)`.as("value"),
     })
     .from(kenaikan_pangkat)
+    .where(eq(kenaikan_pangkat.id_opd, 3))
     .groupBy(kenaikan_pangkat.tahun, kenaikan_pangkat.bulan)
     .orderBy(
       sql`CASE 
@@ -47,6 +44,7 @@ export default async function Page() {
       ),
     })
     .from(status_dokumen)
+    .where(eq(status_dokumen.id_opd, 3))
     .groupBy(status_dokumen.tahun, status_dokumen.bulan)
     .orderBy(
       sql`CASE 
@@ -66,12 +64,13 @@ export default async function Page() {
     END`
     );
   // Use `user` to render user details or create UI elements
+
   return (
     <>
-      {/* <div className="flex justify-between items-center px-8 py-2 gap-4 sticky top-0 w-full bg-white shadow">
-        <h1 className="text-xl">MAMANK US</h1>
-        <UserButton showName />
-      </div> */}
+      <div className="col-span-full bg-white flex justify-between items-center p-4 rounded-2xl shadow">
+        <h1 className="text-lg">Tahunan</h1>
+        <YearPicker initialYear={new Date().getFullYear().toString()} />
+      </div>
       <div className="w-full h-96 col-span-8 bg-white p-4 rounded-2xl shadow">
         {dataKenaikanPangkat && (
           <LineChartCustom

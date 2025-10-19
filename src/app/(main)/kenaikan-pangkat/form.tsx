@@ -97,7 +97,7 @@ export function FormKenaikanPangkat({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6 mx-auto bg-white p-6 rounded-md shadow w-full"
+        className="space-y-6 mx-auto w-full grid grid-cols-12 gap-x-4"
       >
         {/* Hidden ID field for updates */}
         {initialData?.id && <input type="hidden" {...form.register("id")} />}
@@ -105,7 +105,7 @@ export function FormKenaikanPangkat({
         <FormField
           name="tahun"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="col-span-full">
               <FormLabel>Tahun</FormLabel>
               <FormControl>
                 <Input
@@ -123,7 +123,7 @@ export function FormKenaikanPangkat({
         <FormField
           name="bulan"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="col-span-full">
               <FormLabel>Bulan</FormLabel>
               <FormControl>
                 <Input placeholder="Contoh: Januari" {...field} />
@@ -137,7 +137,7 @@ export function FormKenaikanPangkat({
           control={form.control}
           name="id_opd"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="col-span-full">
               <FormLabel>OPD</FormLabel>
               <FormControl>
                 <select
@@ -163,7 +163,7 @@ export function FormKenaikanPangkat({
         <FormField
           name="value"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="col-span-full">
               <FormLabel>Value</FormLabel>
               <FormControl>
                 <Input type="number" placeholder="0" {...field} />
@@ -173,12 +173,24 @@ export function FormKenaikanPangkat({
           )}
         />
 
-        <Button type="submit" disabled={mutation.isPending}>
+        <Button
+          className="col-span-6"
+          type="submit"
+          disabled={mutation.isPending}
+        >
           {mutation.isPending
             ? initialData
               ? "Menyimpan..."
               : "Membuat..."
             : "Simpan"}
+        </Button>
+        <Button
+          className="col-span-6"
+          type="reset"
+          onClick={() => form.reset()}
+          variant={"destructive"}
+        >
+          Reset
         </Button>
       </form>
     </Form>

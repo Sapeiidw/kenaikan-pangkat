@@ -1,208 +1,222 @@
-import * as React from "react"
-import { GalleryVerticalEnd } from "lucide-react"
+"use client";
 
+import * as React from "react";
+import {
+  AudioWaveform,
+  BookOpen,
+  Bot,
+  Command,
+  Frame,
+  GalleryVerticalEnd,
+  Map,
+  PieChart,
+  Settings2,
+  SquareTerminal,
+} from "lucide-react";
+
+import { NavMain } from "@/components/nav-main";
+import { NavProjects } from "@/components/nav-projects";
+import { NavUser } from "@/components/nav-user";
+import { TeamSwitcher } from "@/components/team-switcher";
 import {
   Sidebar,
   SidebarContent,
-  SidebarGroup,
+  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
   SidebarRail,
-} from "@/components/ui/sidebar"
+  useSidebar,
+} from "@/components/ui/sidebar";
+import { usePathname } from "next/navigation";
+import { UserButton } from "@clerk/nextjs";
+import { cn } from "@/lib/utils";
 
 // This is sample data.
 const data = {
+  user: {
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
+  },
+  teams: [
+    {
+      name: "Acme Inc",
+      logo: GalleryVerticalEnd,
+      plan: "Enterprise",
+    },
+    {
+      name: "Acme Corp.",
+      logo: AudioWaveform,
+      plan: "Startup",
+    },
+    {
+      name: "Evil Corp.",
+      logo: Command,
+      plan: "Free",
+    },
+  ],
   navMain: [
     {
-      title: "Getting Started",
+      title: "Disdik",
       url: "#",
+      icon: SquareTerminal,
+      isActive: true,
       items: [
         {
-          title: "Installation",
-          url: "#",
+          title: "Dashboard",
+          url: "/disdik",
         },
         {
-          title: "Project Structure",
-          url: "#",
+          title: "Tambah Data",
+          url: "/disdik/tambah-data",
         },
       ],
     },
     {
-      title: "Building Your Application",
+      title: "Dinkes",
       url: "#",
+      icon: Bot,
       items: [
         {
-          title: "Routing",
-          url: "#",
+          title: "Dashboard",
+          url: "/dinkes",
         },
         {
-          title: "Data Fetching",
-          url: "#",
-          isActive: true,
-        },
-        {
-          title: "Rendering",
-          url: "#",
-        },
-        {
-          title: "Caching",
-          url: "#",
-        },
-        {
-          title: "Styling",
-          url: "#",
-        },
-        {
-          title: "Optimizing",
-          url: "#",
-        },
-        {
-          title: "Configuring",
-          url: "#",
-        },
-        {
-          title: "Testing",
-          url: "#",
-        },
-        {
-          title: "Authentication",
-          url: "#",
-        },
-        {
-          title: "Deploying",
-          url: "#",
-        },
-        {
-          title: "Upgrading",
-          url: "#",
-        },
-        {
-          title: "Examples",
-          url: "#",
+          title: "Tambah Data",
+          url: "/dinkes/tambah-data",
         },
       ],
     },
     {
-      title: "API Reference",
+      title: "Rsud",
       url: "#",
+      icon: BookOpen,
       items: [
         {
-          title: "Components",
-          url: "#",
+          title: "Dashboard",
+          url: "/rsud",
         },
         {
-          title: "File Conventions",
-          url: "#",
-        },
-        {
-          title: "Functions",
-          url: "#",
-        },
-        {
-          title: "next.config.js Options",
-          url: "#",
-        },
-        {
-          title: "CLI",
-          url: "#",
-        },
-        {
-          title: "Edge Runtime",
-          url: "#",
+          title: "Tambah Data",
+          url: "/rsud/tambah-data",
         },
       ],
     },
     {
-      title: "Architecture",
+      title: "Settings",
       url: "#",
+      icon: Settings2,
       items: [
         {
-          title: "Accessibility",
+          title: "General",
           url: "#",
         },
         {
-          title: "Fast Refresh",
+          title: "Team",
           url: "#",
         },
         {
-          title: "Next.js Compiler",
+          title: "Billing",
           url: "#",
         },
         {
-          title: "Supported Browsers",
-          url: "#",
-        },
-        {
-          title: "Turbopack",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Community",
-      url: "#",
-      items: [
-        {
-          title: "Contribution Guide",
+          title: "Limits",
           url: "#",
         },
       ],
     },
   ],
-}
+  projects: [
+    {
+      name: "Design Engineering",
+      url: "#",
+      icon: Frame,
+    },
+    {
+      name: "Sales & Marketing",
+      url: "#",
+      icon: PieChart,
+    },
+    {
+      name: "Travel",
+      url: "#",
+      icon: Map,
+    },
+  ],
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const pathname = usePathname();
+  // 🧠 Compute active state dynamically
+  const navWithActive = React.useMemo(() => {
+    return data.navMain.map((section) => {
+      const updatedItems = section.items.map((item) => ({
+        ...item,
+        isActive: item.url.includes(pathname) || pathname === item.url, // highlight if exact match
+      }));
+
+      const isSectionActive = updatedItems.some((i) => i.isActive);
+
+      return {
+        ...section,
+        items: updatedItems,
+        isActive: isSectionActive,
+      };
+    });
+  }, [pathname]);
+
+  const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
+
   return (
-    <Sidebar {...props}>
+    <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="#">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <GalleryVerticalEnd className="size-4" />
-                </div>
-                <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-medium">Documentation</span>
-                  <span className="">v1.0.0</span>
-                </div>
-              </a>
+            <SidebarMenuButton
+              size="lg"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+            >
+              <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+                <AudioWaveform className="size-4" />
+              </div>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-medium">Kenaikan Pangkat</span>
+                <span className="truncate text-xs">Enterprise</span>
+              </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarMenu>
-            {data.navMain.map((item) => (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild>
-                  <a href={item.url} className="font-medium">
-                    {item.title}
-                  </a>
-                </SidebarMenuButton>
-                {item.items?.length ? (
-                  <SidebarMenuSub>
-                    {item.items.map((item) => (
-                      <SidebarMenuSubItem key={item.title}>
-                        <SidebarMenuSubButton asChild isActive={item.isActive}>
-                          <a href={item.url}>{item.title}</a>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    ))}
-                  </SidebarMenuSub>
-                ) : null}
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
+        <NavMain items={navWithActive} />
+        <NavProjects projects={data.projects} />
       </SidebarContent>
+      <SidebarFooter>
+        {/* <SidebarMenu>
+          <SidebarMenuItem> */}
+        <UserButton
+          showName={state === "expanded"}
+          appearance={{
+            elements: {
+              rootBox: "!w-full",
+              userButtonTrigger: "!w-full",
+              userButtonBox: cn(
+                state === "expanded"
+                  ? "py-2 px-4 bg-neutral-800"
+                  : "p-0 bg-transparent",
+                "!w-full flex !justify-between items-center  rounded-md text-white"
+              ),
+            },
+          }}
+        />
+
+        {/* <NavUser user={data.user} /> */}
+        {/* </SidebarMenuItem> */}
+        {/* </SidebarMenu> */}
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

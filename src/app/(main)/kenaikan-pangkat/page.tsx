@@ -1,0 +1,175 @@
+"use client";
+
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { ColumnDef } from "@tanstack/react-table";
+import { MoreHorizontal } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { DataTable } from "@/components/data-table/data-table";
+import { FormKenaikanPangkat } from "./form";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { DataTableColumnHeader } from "@/components/data-table/column-header";
+
+export default function Page() {
+  const queryClient = useQueryClient();
+
+  const { data } = useQuery({
+    queryKey: ["kenaikan-pangkat"],
+    queryFn: async () =>
+      await fetch(`/api/kenaikan-pangkat`).then((res) => res.json()),
+  });
+
+  const deleteMutation = useMutation({
+    mutationKey: ["delete-kenaikan-pangkat"],
+    mutationFn: async () => {
+      const res = await fetch(`/api/kenaikan-pangkat/${init.id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to delete");
+      return res.json();
+    },
+    onSuccess: () => {
+      toast.success("Data berhasil dihapus");
+      queryClient.invalidateQueries({ queryKey: ["kenaikan-pangkat"] });
+    },
+    onError: () => {
+      toast.error("Gagal menghapus data");
+    },
+  });
+
+  const [isOpenForm, setIsOpenForm] = useState(false);
+  const [init, setInit] = useState<KenaikanPangkat>({
+    id: null,
+    tahun: new Date().getFullYear(),
+    bulan: "",
+    id_opd: 0,
+    nama_opd: "",
+    value: 0,
+  });
+
+  const FormEdit = (data: KenaikanPangkat) => {
+    setIsOpenForm(true);
+    setInit(data);
+  };
+
+  type KenaikanPangkat = {
+    id: number | null;
+    tahun: number;
+    bulan: string;
+    id_opd: number;
+    nama_opd: string;
+    value: number;
+  };
+  const columns: ColumnDef<KenaikanPangkat>[] = [
+    {
+      accessorKey: "tahun",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Tahun" />
+      ),
+    },
+    {
+      accessorKey: "bulan",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Bulan" />
+      ),
+    },
+    {
+      accessorKey: "nama_opd",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Nama OPD" />
+      ),
+    },
+    {
+      accessorKey: "value",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Naik Pangkat" />
+      ),
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText(row.id)}
+              >
+                Copy ID
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => FormEdit(row.original)}>
+                Edit Data
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  deleteMutation.mutate();
+                }}
+              >
+                Hapus Data
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
+
+  return (
+    <>
+      <h1 className="text-2xl font-bold col-span-full">Kenaikan Pangkat</h1>
+      <Dialog open={isOpenForm} onOpenChange={setIsOpenForm}>
+        <DialogTrigger asChild>
+          <Button onClick={() => setIsOpenForm(true)}>Add</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Form Kenaikan Pangkat</DialogTitle>
+            <DialogDescription>
+              Tambahkan data kenaikan pangkat
+            </DialogDescription>
+            <FormKenaikanPangkat
+              initialData={init}
+              onSuccess={() =>
+                setInit({
+                  id: null,
+                  tahun: new Date().getFullYear(),
+                  bulan: "",
+                  id_opd: 0,
+                  nama_opd: "",
+                  value: 0,
+                })
+              }
+            />
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+      <div className="col-span-full">
+        {data && <DataTable columns={columns} data={data} />}
+      </div>
+    </>
+  );
+}
