@@ -1,4 +1,5 @@
 import {
+  date,
   foreignKey,
   integer,
   pgTable,
@@ -100,8 +101,7 @@ export const status_sk_kenaikan_pangkat = pgTable(
   "status_sk_kenaikan_pangkat",
   {
     id: serial("id").primaryKey(),
-    tahun: integer().notNull(),
-    bulan: text().notNull(),
+    periode: date().notNull(),
     id_opd: integer().notNull(),
     sudah_ttd_pertek: integer().notNull().default(0),
     belum_ttd_pertek: integer().notNull().default(0),
@@ -111,6 +111,6 @@ export const status_sk_kenaikan_pangkat = pgTable(
       columns: [table.id_opd],
       foreignColumns: [opd.id],
     }),
-    unique().on(table.tahun, table.bulan, table.id_opd),
+    unique().on(table.periode, table.id_opd),
   ]
 );

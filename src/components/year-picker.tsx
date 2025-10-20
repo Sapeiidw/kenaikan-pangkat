@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import {
   Select,
   SelectContent,
@@ -7,29 +8,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import * as React from "react";
+import { cn } from "@/lib/utils";
 
-interface YearPickerProps {
-  initialYear?: string;
-  onChange?: (year: string) => void;
+interface ValuePickerProps {
+  value?: string; // <-- accept "value" instead of "initialValue"
+  onChange?: (value: string) => void;
+  className?: string;
 }
 
-export function YearPicker({ initialYear, onChange }: YearPickerProps) {
-  const [year, setYear] = React.useState(initialYear || "");
-
+export function YearPicker({ value, onChange, className }: ValuePickerProps) {
   const years = Array.from(
     { length: new Date().getFullYear() - 1945 + 1 },
     (_, i) => new Date().getFullYear() - i
   );
 
-  function handleChange(value: string) {
-    setYear(value);
-    onChange?.(value); // Notify parent if provided
-  }
-
   return (
-    <Select value={year} onValueChange={handleChange}>
-      <SelectTrigger className="w-[180px] bg-white">
+    <Select value={value} onValueChange={onChange}>
+      <SelectTrigger className={cn("w-[180px] bg-white", className)}>
         <SelectValue placeholder="Select Year" />
       </SelectTrigger>
       <SelectContent>

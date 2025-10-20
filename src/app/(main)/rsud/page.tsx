@@ -69,7 +69,7 @@ export default async function Page() {
     <>
       <div className="col-span-full bg-white flex justify-between items-center p-4 rounded-2xl shadow">
         <h1 className="text-lg">Tahunan</h1>
-        <YearPicker initialYear={new Date().getFullYear().toString()} />
+        <YearPicker initialValue={new Date().getFullYear().toString()} />
       </div>
       <div className="w-full h-96 col-span-8 bg-white p-4 rounded-2xl shadow">
         {dataKenaikanPangkat && (
@@ -102,7 +102,7 @@ export default async function Page() {
 
       <div className="col-span-full bg-white flex justify-between items-center p-4 rounded-2xl shadow">
         <h1 className="text-lg">Bulanan</h1>
-        <YearPicker initialYear={new Date().getFullYear().toString()} />
+        <YearPicker initialValue={new Date().getFullYear().toString()} />
       </div>
 
       <div className="w-full h-100 col-span-4 flex justify-center items-center bg-white p-4 rounded-2xl shadow">
