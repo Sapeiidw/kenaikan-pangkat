@@ -117,6 +117,7 @@ export default function Page() {
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => {
+                  setInit(row.original);
                   deleteMutation.mutate();
                 }}
               >
