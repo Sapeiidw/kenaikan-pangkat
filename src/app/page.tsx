@@ -7,7 +7,7 @@ import { sql } from "drizzle-orm";
 
 const dataKenaikanPangkat = await db
   .select({
-    label: sql<string>`TRIM(TO_CHAR(DATE '2025-09-01', 'Month'))`.as("label"),
+    label: sql<string>`TRIM(TO_CHAR(periode, 'Month'))`.as("label"),
     value: sql<number>`SUM(kenaikan_pangkat.value)`.as("value"),
   })
   .from(kenaikan_pangkat)
@@ -16,7 +16,7 @@ const dataKenaikanPangkat = await db
 
 const dataStatusDokumen = await db
   .select({
-    label: sql<string>`TRIM(TO_CHAR(DATE '2025-09-01', 'Month'))`.as("label"),
+    label: sql<string>`TRIM(TO_CHAR(periode, 'Month'))`.as("label"),
     berhasil: sql<number>`SUM(status_dokumen_wajib.berhasil)`.as("berhasil"),
     tidak_berhasil: sql<number>`SUM(status_dokumen_wajib.tidak_berhasil)`.as(
       "tidak_berhasil"
