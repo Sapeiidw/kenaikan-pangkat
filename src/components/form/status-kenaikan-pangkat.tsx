@@ -24,29 +24,32 @@ export const formSchema = z4.object({
   tahun: z4.coerce.number<number>().min(2000, "Minimal tahun 2000"),
   bulan: z4.string().min(1, "Bulan tidak boleh kosong"),
   id_opd: z4.coerce.number<number>().min(1, "OPD harus dipilih"),
+  input_berkas: z4.coerce.number<number>().min(0),
+  berkas_disimpan: z4.coerce.number<number>().min(0),
+  bts: z4.coerce.number<number>().min(0),
   sudah_ttd_pertek: z4.coerce.number<number>().min(0),
-  belum_ttd_pertek: z4.coerce.number<number>().min(0),
+  tms: z4.coerce.number<number>().min(0),
 });
 
 type FormData = z4.infer<typeof formSchema>;
 
-interface FormStatusSKKenaikanPangkatProps {
+interface FormStatusKenaikanPangkatProps {
   initialData?: FormData; // pass this if editing
   onSuccess?: () => void; // callback after successful submission
 }
 
-export function FormStatusSKKenaikanPangkat({
+export function FormStatusKenaikanPangkat({
   initialData,
   onSuccess,
-}: FormStatusSKKenaikanPangkatProps) {
+}: FormStatusKenaikanPangkatProps) {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: async (data: FormData) => {
       const method = data.id ? "PUT" : "POST";
       const url = data.id
-        ? `/api/status-sk-kenaikan-pangkat/${data.id}`
-        : "/api/status-sk-kenaikan-pangkat";
+        ? `/api/status-kenaikan-pangkat/${data.id}`
+        : "/api/status-kenaikan-pangkat";
 
       const response = await fetch(url, {
         method,
@@ -64,7 +67,7 @@ export function FormStatusSKKenaikanPangkat({
       toast.success(initialData ? "Update berhasil!" : "Data berhasil dibuat!");
       form.reset();
       queryClient.invalidateQueries({
-        queryKey: ["status-sk-kenaikan-pangkat"],
+        queryKey: ["status-kenaikan-pangkat"],
       });
       onSuccess?.();
     },
@@ -80,8 +83,11 @@ export function FormStatusSKKenaikanPangkat({
       tahun: 0,
       bulan: "",
       id_opd: 0,
+      input_berkas: 0,
+      berkas_disimpan: 0,
+      bts: 0,
       sudah_ttd_pertek: 0,
-      belum_ttd_pertek: 0,
+      tms: 0,
     },
   });
 
@@ -176,6 +182,63 @@ export function FormStatusSKKenaikanPangkat({
         />
 
         <FormField
+          name="input_berkas"
+          render={({ field }) => (
+            <FormItem className="col-span-full">
+              <FormLabel>Input Berkas</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  placeholder="0"
+                  {...field}
+                  required
+                  onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          name="berkas_disimpan"
+          render={({ field }) => (
+            <FormItem className="col-span-full">
+              <FormLabel>Berkas Disimpan</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  placeholder="0"
+                  {...field}
+                  required
+                  onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          name="bts"
+          render={({ field }) => (
+            <FormItem className="col-span-full">
+              <FormLabel>BTS</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  placeholder="0"
+                  {...field}
+                  required
+                  onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
           name="sudah_ttd_pertek"
           render={({ field }) => (
             <FormItem className="col-span-full">
@@ -199,6 +262,25 @@ export function FormStatusSKKenaikanPangkat({
           render={({ field }) => (
             <FormItem className="col-span-full">
               <FormLabel>Belum TTD Pertek</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  placeholder="0"
+                  {...field}
+                  required
+                  onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          name="tms"
+          render={({ field }) => (
+            <FormItem className="col-span-full">
+              <FormLabel>TMS</FormLabel>
               <FormControl>
                 <Input
                   type="number"

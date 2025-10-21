@@ -61,20 +61,20 @@ export const status_kenaikan_pangkat = pgTable(
   "status_kenaikan_pangkat",
   {
     id: serial("id").primaryKey(),
-    tahun: integer().notNull(),
-    bulan: text().notNull(),
+    periode: date().notNull(),
     id_opd: integer().notNull(),
     input_berkas: integer().notNull().default(0),
     berkas_disimpan: integer().notNull().default(0),
     bts: integer().notNull().default(0),
     sudah_ttd_pertek: integer().notNull().default(0),
+    tms: integer().notNull().default(0),
   },
   (table) => [
     foreignKey({
       columns: [table.id_opd],
       foreignColumns: [opd.id],
     }),
-    unique().on(table.tahun, table.bulan, table.id_opd),
+    unique().on(table.periode, table.id_opd),
   ]
 );
 

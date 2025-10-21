@@ -110,7 +110,7 @@ const data = {
         },
         {
           title: "Status SK Kenpa",
-          url: "/rsud/status-sk-kenpa",
+          url: "/rsud/status-sk-kenaikan-pangkat",
         },
         {
           title: "Status Kenaikan Pangkat",
