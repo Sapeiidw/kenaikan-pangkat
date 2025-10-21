@@ -1,6 +1,17 @@
 "use client";
 
+import { DataTableColumnHeader } from "@/components/data-table/column-header";
+import { DataTable } from "@/components/data-table/data-table";
+import { FormKenaikanPangkat } from "@/components/form/kenaikan-pangkat";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,19 +25,29 @@ import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { DataTable } from "@/components/data-table/data-table";
-import { FormKenaikanPangkat } from "./form";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { DataTableColumnHeader } from "@/components/data-table/column-header";
 
 export default function Page() {
+  type KenaikanPangkat = {
+    id: number | null;
+    periode: Date;
+    tahun: number;
+    bulan: string;
+    id_opd: number;
+    nama_opd: string;
+    value: number;
+  };
+
+  const [isOpenForm, setIsOpenForm] = useState(false);
+  const [init, setInit] = useState<KenaikanPangkat>({
+    id: null,
+    periode: new Date(),
+    tahun: new Date().getFullYear(),
+    bulan: "",
+    id_opd: 3, // RSUD !hardcode
+    nama_opd: "",
+    value: 0,
+  });
+
   const queryClient = useQueryClient();
 
   const { data } = useQuery({
@@ -46,48 +67,40 @@ export default function Page() {
     },
     onSuccess: () => {
       toast.success("Data berhasil dihapus");
-      queryClient.invalidateQueries({ queryKey: ["kenaikan-pangkat"] });
+      queryClient.invalidateQueries({
+        queryKey: ["kenaikan-pangkat"],
+      });
     },
     onError: () => {
       toast.error("Gagal menghapus data");
     },
   });
 
-  const [isOpenForm, setIsOpenForm] = useState(false);
-  const [init, setInit] = useState<KenaikanPangkat>({
-    id: null,
-    tahun: new Date().getFullYear(),
-    bulan: "",
-    id_opd: 0,
-    nama_opd: "",
-    value: 0,
-  });
-
   const FormEdit = (data: KenaikanPangkat) => {
     setIsOpenForm(true);
-    setInit(data);
+    setInit({ ...data, periode: new Date(data.periode) });
   };
 
-  type KenaikanPangkat = {
-    id: number | null;
-    tahun: number;
-    bulan: string;
-    id_opd: number;
-    nama_opd: string;
-    value: number;
-  };
   const columns: ColumnDef<KenaikanPangkat>[] = [
     {
       accessorKey: "tahun",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Tahun" />
       ),
+      cell: ({ row }) => {
+        return new Date(row.getValue("periode")).getFullYear();
+      },
     },
     {
-      accessorKey: "bulan",
+      accessorKey: "periode",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Bulan" />
       ),
+      cell: ({ row }) => {
+        return new Date(row.getValue("periode")).toLocaleDateString("id-ID", {
+          month: "long",
+        });
+      },
     },
     {
       accessorKey: "nama_opd",
@@ -98,7 +111,7 @@ export default function Page() {
     {
       accessorKey: "value",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Naik Pangkat" />
+        <DataTableColumnHeader column={column} title="Golongan I" />
       ),
     },
     {
@@ -157,9 +170,10 @@ export default function Page() {
               onSuccess={() =>
                 setInit({
                   id: null,
+                  periode: new Date(),
                   tahun: new Date().getFullYear(),
                   bulan: "",
-                  id_opd: 0,
+                  id_opd: 3, // RSUD !hardcode
                   nama_opd: "",
                   value: 0,
                 })

@@ -24,8 +24,7 @@ export const kenaikan_pangkat = pgTable(
   "kenaikan_pangkat",
   {
     id: serial("id").primaryKey(),
-    tahun: integer().notNull(),
-    bulan: text().notNull(),
+    periode: date().notNull(),
     id_opd: integer().notNull(),
     value: integer().notNull().default(0),
   },
@@ -34,16 +33,15 @@ export const kenaikan_pangkat = pgTable(
       columns: [table.id_opd],
       foreignColumns: [opd.id],
     }),
-    unique().on(table.tahun, table.bulan, table.id_opd),
+    unique().on(table.periode, table.id_opd),
   ]
 );
 
-export const status_dokumen = pgTable(
-  "status_dokumen",
+export const status_dokumen_wajib = pgTable(
+  "status_dokumen_wajib",
   {
     id: serial("id").primaryKey(),
-    tahun: integer().notNull(),
-    bulan: text().notNull(),
+    periode: date().notNull(),
     id_opd: integer().notNull(),
     berhasil: integer().notNull().default(0),
     tidak_berhasil: integer().notNull().default(0),
@@ -53,7 +51,7 @@ export const status_dokumen = pgTable(
       columns: [table.id_opd],
       foreignColumns: [opd.id],
     }),
-    unique().on(table.tahun, table.bulan, table.id_opd),
+    unique().on(table.periode, table.id_opd),
   ]
 );
 
@@ -105,6 +103,26 @@ export const status_sk_kenaikan_pangkat = pgTable(
     id_opd: integer().notNull(),
     sudah_ttd_pertek: integer().notNull().default(0),
     belum_ttd_pertek: integer().notNull().default(0),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.id_opd],
+      foreignColumns: [opd.id],
+    }),
+    unique().on(table.periode, table.id_opd),
+  ]
+);
+
+export const golongan_pegawai = pgTable(
+  "golongan_pegawai",
+  {
+    id: serial("id").primaryKey(),
+    periode: date().notNull(),
+    id_opd: integer().notNull(),
+    golongan_i: integer().notNull().default(0),
+    golongan_ii: integer().notNull().default(0),
+    golongan_iii: integer().notNull().default(0),
+    golongan_iv: integer().notNull().default(0),
   },
   (table) => [
     foreignKey({

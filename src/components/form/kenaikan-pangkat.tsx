@@ -15,10 +15,13 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z4 from "zod/v4";
+import { YearPicker } from "../year-picker";
+import { MonthPicker } from "../month-picker";
 
 export const formSchema = z4.object({
   id: z4.number().nullish(), // Add optional id for update
-  tahun: z4.coerce.number<number>().min(2000, "Minimal tahun 2000"),
+  periode: z4.date(),
+  tahun: z4.coerce.number<number>().min(1945, "Minimal tahun 1945"),
   bulan: z4.string().min(1, "Bulan tidak boleh kosong"),
   id_opd: z4.coerce.number<number>().min(1, "OPD harus dipilih"),
   value: z4.coerce.number<number>().min(0),
@@ -59,7 +62,9 @@ export function FormKenaikanPangkat({
     onSuccess: () => {
       toast.success(initialData ? "Update berhasil!" : "Data berhasil dibuat!");
       form.reset();
-      queryClient.invalidateQueries({ queryKey: ["kenaikan-pangkat"] });
+      queryClient.invalidateQueries({
+        queryKey: ["kenaikan-pangkat"],
+      });
       onSuccess?.();
     },
     onError: () => {
@@ -70,7 +75,8 @@ export function FormKenaikanPangkat({
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
-      tahun: new Date().getFullYear(),
+      periode: new Date(),
+      tahun: 0,
       bulan: "",
       id_opd: 0,
       value: 0,
@@ -90,6 +96,7 @@ export function FormKenaikanPangkat({
   });
 
   const onSubmit = (data: FormData) => {
+    console.log(data, "data");
     mutation.mutate(data);
   };
 
@@ -103,37 +110,6 @@ export function FormKenaikanPangkat({
         {initialData?.id && <input type="hidden" {...form.register("id")} />}
 
         <FormField
-          name="tahun"
-          render={({ field }) => (
-            <FormItem className="col-span-full">
-              <FormLabel>Tahun</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  placeholder="Contoh: 2025"
-                  {...field}
-                  onChange={(e) => field.onChange(e.target.valueAsNumber)}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          name="bulan"
-          render={({ field }) => (
-            <FormItem className="col-span-full">
-              <FormLabel>Bulan</FormLabel>
-              <FormControl>
-                <Input placeholder="Contoh: Januari" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
           control={form.control}
           name="id_opd"
           render={({ field }) => (
@@ -143,6 +119,7 @@ export function FormKenaikanPangkat({
                 <select
                   {...field}
                   className="w-full rounded border px-3 py-2 text-sm"
+                  disabled={!!initialData!.id_opd}
                 >
                   <option value="">Pilih OPD</option>
                   {dataOpd &&
@@ -161,12 +138,54 @@ export function FormKenaikanPangkat({
         />
 
         <FormField
+          name="tahun"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem className="col-span-full">
+              <FormLabel>Tahun</FormLabel>
+              <FormControl>
+                <YearPicker
+                  className="w-full"
+                  value={field.value.toString() ?? ""}
+                  onChange={field.onChange}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          name="bulan"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem className="col-span-full">
+              <FormLabel>Bulan</FormLabel>
+              <FormControl>
+                <MonthPicker
+                  className="w-full"
+                  value={field.value ? String(field.value) : ""}
+                  onChange={(v) => field.onChange(v)}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
           name="value"
           render={({ field }) => (
             <FormItem className="col-span-full">
               <FormLabel>Kenaikan Pangkat</FormLabel>
               <FormControl>
-                <Input type="number" placeholder="0" {...field} />
+                <Input
+                  type="number"
+                  placeholder="0"
+                  {...field}
+                  required
+                  onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

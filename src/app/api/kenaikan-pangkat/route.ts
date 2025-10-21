@@ -1,12 +1,14 @@
 import { kenaikan_pangkat, opd } from "@/db/schema";
 import { db } from "@/lib/db";
-import { eq, getTableColumns } from "drizzle-orm";
+import { eq, getTableColumns, sql } from "drizzle-orm";
 
 export async function GET() {
   const data = await db
     .select({
       ...getTableColumns(kenaikan_pangkat),
       nama_opd: opd.nama,
+      tahun: sql<number>`extract(year from periode)`,
+      bulan: sql<number>`extract(month from periode)`,
     })
     .from(kenaikan_pangkat)
     .leftJoin(opd, eq(kenaikan_pangkat.id_opd, opd.id))
@@ -22,7 +24,10 @@ export async function POST(req: Request) {
     const data = await db.transaction(async (tx) => {
       const [result] = await tx
         .insert(kenaikan_pangkat)
-        .values(body)
+        .values({
+          ...body,
+          periode: new Date(`${body.tahun}-${body.bulan}-01`),
+        })
         .returning();
       return result;
     });
