@@ -5,30 +5,29 @@ import { kenaikan_pangkat, status_dokumen_wajib } from "@/db/schema";
 import { db } from "@/lib/db";
 import { eq, sql } from "drizzle-orm";
 
-const dataKenaikanPangkat = await db
-  .select({
-    label: sql<string>`TRIM(TO_CHAR(periode, 'Month'))`.as("label"),
-    value: sql<number>`SUM(kenaikan_pangkat.value)`.as("value"),
-  })
-  .from(kenaikan_pangkat)
-  .where(eq(kenaikan_pangkat.id_opd, 1))
-  .groupBy(kenaikan_pangkat.periode)
-  .orderBy(kenaikan_pangkat.periode);
-
-const dataStatusDokumen = await db
-  .select({
-    label: sql<string>`TRIM(TO_CHAR(periode, 'Month'))`.as("label"),
-    berhasil: sql<number>`SUM(status_dokumen_wajib.berhasil)`.as("berhasil"),
-    tidak_berhasil: sql<number>`SUM(status_dokumen_wajib.tidak_berhasil)`.as(
-      "tidak_berhasil"
-    ),
-  })
-  .from(status_dokumen_wajib)
-  .where(eq(status_dokumen_wajib.id_opd, 1))
-  .groupBy(status_dokumen_wajib.periode)
-  .orderBy(status_dokumen_wajib.periode);
-
 export default async function Page() {
+  const dataKenaikanPangkat = await db
+    .select({
+      label: sql<string>`TRIM(TO_CHAR(periode, 'Month'))`.as("label"),
+      value: sql<number>`SUM(kenaikan_pangkat.value)`.as("value"),
+    })
+    .from(kenaikan_pangkat)
+    .where(eq(kenaikan_pangkat.id_opd, 1))
+    .groupBy(kenaikan_pangkat.periode)
+    .orderBy(kenaikan_pangkat.periode);
+
+  const dataStatusDokumen = await db
+    .select({
+      label: sql<string>`TRIM(TO_CHAR(periode, 'Month'))`.as("label"),
+      berhasil: sql<number>`SUM(status_dokumen_wajib.berhasil)`.as("berhasil"),
+      tidak_berhasil: sql<number>`SUM(status_dokumen_wajib.tidak_berhasil)`.as(
+        "tidak_berhasil"
+      ),
+    })
+    .from(status_dokumen_wajib)
+    .where(eq(status_dokumen_wajib.id_opd, 1))
+    .groupBy(status_dokumen_wajib.periode)
+    .orderBy(status_dokumen_wajib.periode);
   return (
     <>
       <div className="w-full h-96 col-span-8 bg-white p-4 rounded-2xl shadow">
