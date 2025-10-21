@@ -18,7 +18,7 @@ import z4 from "zod/v4";
 
 export const formSchema = z4.object({
   id: z4.number().nullish(), // Add optional id for update
-  tahun: z4.coerce.number<number>().min(2000, "Minimal tahun 2000"),
+  tahun: z4.coerce.number<number>().min(1945, "Minimal tahun 1945"),
   bulan: z4.string().min(1, "Bulan tidak boleh kosong"),
   id_opd: z4.coerce.number<number>().min(1, "OPD harus dipilih"),
   berhasil: z4.coerce.number<number>().min(0),
