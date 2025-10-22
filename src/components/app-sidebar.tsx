@@ -118,7 +118,7 @@ const data = {
         },
         {
           title: "Status Pegawai",
-          url: "/rsud/pegawai",
+          url: "/rsud/status-pegawai",
         },
       ],
     },

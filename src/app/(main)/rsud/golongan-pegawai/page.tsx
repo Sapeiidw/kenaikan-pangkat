@@ -191,7 +191,8 @@ export default function Page() {
             </DialogDescription>
             <FormGolonganPegawai
               initialData={init}
-              onSuccess={() =>
+              onSuccess={() => {
+                setIsOpenForm(false);
                 setInit({
                   id: null,
                   periode: new Date(),
@@ -203,8 +204,8 @@ export default function Page() {
                   golongan_ii: 0,
                   golongan_iii: 0,
                   golongan_iv: 0,
-                })
-              }
+                });
+              }}
             />
           </DialogHeader>
         </DialogContent>

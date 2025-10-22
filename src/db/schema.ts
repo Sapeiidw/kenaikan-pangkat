@@ -132,3 +132,23 @@ export const golongan_pegawai = pgTable(
     unique().on(table.periode, table.id_opd),
   ]
 );
+
+export const status_pegawai = pgTable(
+  "status_pegawai",
+  {
+    id: serial("id").primaryKey(),
+    periode: date().notNull(),
+    id_opd: integer().notNull(),
+    nama: text().notNull(),
+    nip: text().notNull().unique(),
+    golongan: text().notNull(),
+    status: text().notNull(),
+    keterangan: text().notNull(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.id_opd],
+      foreignColumns: [opd.id],
+    }),
+  ]
+);

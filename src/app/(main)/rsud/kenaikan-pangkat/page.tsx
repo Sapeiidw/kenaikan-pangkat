@@ -167,7 +167,8 @@ export default function Page() {
             </DialogDescription>
             <FormKenaikanPangkat
               initialData={init}
-              onSuccess={() =>
+              onSuccess={() => {
+                setIsOpenForm(false);
                 setInit({
                   id: null,
                   periode: new Date(),
@@ -176,8 +177,8 @@ export default function Page() {
                   id_opd: 3, // RSUD !hardcode
                   nama_opd: "",
                   value: 0,
-                })
-              }
+                });
+              }}
             />
           </DialogHeader>
         </DialogContent>

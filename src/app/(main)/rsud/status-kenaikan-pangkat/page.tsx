@@ -201,7 +201,8 @@ export default function Page() {
             </DialogDescription>
             <FormStatusKenaikanPangkat
               initialData={init}
-              onSuccess={() =>
+              onSuccess={() => {
+                setIsOpenForm(false);
                 setInit({
                   id: null,
                   periode: new Date(),
@@ -214,8 +215,8 @@ export default function Page() {
                   bts: 0,
                   sudah_ttd_pertek: 0,
                   tms: 0,
-                })
-              }
+                });
+              }}
             />
           </DialogHeader>
         </DialogContent>

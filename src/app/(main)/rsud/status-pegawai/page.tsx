@@ -1,6 +1,8 @@
 "use client";
 
+import { DataTableColumnHeader } from "@/components/data-table/column-header";
 import { DataTable } from "@/components/data-table/data-table";
+import { FormStatusPegawai } from "@/components/form/status-pegawai";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -23,21 +25,49 @@ import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { FormStatusDokumen } from "./form";
 
 export default function Page() {
+  type StatusPegawai = {
+    id: number | null;
+    periode: Date;
+    tahun: number;
+    bulan: string;
+    id_opd: number;
+    nama_opd: string;
+    nama: string;
+    nip: string;
+    golongan: string;
+    status: string;
+    keterangan: string;
+  };
+
+  const [isOpenForm, setIsOpenForm] = useState(false);
+  const [init, setInit] = useState<StatusPegawai>({
+    id: null,
+    periode: new Date(),
+    tahun: new Date().getFullYear(),
+    bulan: "",
+    id_opd: 3, // RSUD !hardcode
+    nama_opd: "",
+    nama: "",
+    nip: "",
+    golongan: "",
+    status: "",
+    keterangan: "",
+  });
+
   const queryClient = useQueryClient();
 
   const { data } = useQuery({
-    queryKey: ["status-dokumen"],
+    queryKey: ["status-pegawai"],
     queryFn: async () =>
-      await fetch(`/api/status-dokumen`).then((res) => res.json()),
+      await fetch(`/api/status-pegawai`).then((res) => res.json()),
   });
 
   const deleteMutation = useMutation({
-    mutationKey: ["delete-status-dokumen"],
+    mutationKey: ["delete-status-pegawai"],
     mutationFn: async () => {
-      const res = await fetch(`/api/status-dokumen/${init.id}`, {
+      const res = await fetch(`/api/status-pegawai/${init.id}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed to delete");
@@ -45,56 +75,80 @@ export default function Page() {
     },
     onSuccess: () => {
       toast.success("Data berhasil dihapus");
-      queryClient.invalidateQueries({ queryKey: ["status-dokumen"] });
+      queryClient.invalidateQueries({
+        queryKey: ["status-pegawai"],
+      });
     },
     onError: () => {
       toast.error("Gagal menghapus data");
     },
   });
 
-  const [isOpenForm, setIsOpenForm] = useState(false);
-  const [init, setInit] = useState<StatusDokumen>({
-    id: null,
-    tahun: new Date().getFullYear(),
-    bulan: "",
-    id_opd: 0,
-    nama_opd: "",
-    berhasil: 0,
-    tidak_berhasil: 0,
-  });
-
-  type StatusDokumen = {
-    id: number | null;
-    tahun: number;
-    bulan: string;
-    id_opd: number;
-    nama_opd: string;
-    berhasil: number;
-    tidak_berhasil: number;
+  const FormEdit = (data: StatusPegawai) => {
+    setIsOpenForm(true);
+    setInit({ ...data, periode: new Date(data.periode) });
   };
-  const columns: ColumnDef<StatusDokumen>[] = [
+
+  const columns: ColumnDef<StatusPegawai>[] = [
     {
       accessorKey: "tahun",
-      header: "Tahun",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Tahun" />
+      ),
+      cell: ({ row }) => {
+        return new Date(row.getValue("periode")).getFullYear();
+      },
     },
     {
-      accessorKey: "bulan",
-      header: "Bulan",
+      accessorKey: "periode",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Bulan" />
+      ),
+      cell: ({ row }) => {
+        return new Date(row.getValue("periode")).toLocaleDateString("id-ID", {
+          month: "long",
+        });
+      },
     },
     {
       accessorKey: "nama_opd",
-      header: "Nama OPD",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Nama OPD" />
+      ),
     },
     {
-      accessorKey: "berhasil",
-      header: "Berhasil",
+      accessorKey: "nama",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Nama" />
+      ),
     },
     {
-      accessorKey: "tidak_berhasil",
-      header: "Tidak Berhasil",
+      accessorKey: "nip",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="NIP" />
+      ),
+    },
+    {
+      accessorKey: "golongan",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Golongan" />
+      ),
+    },
+    {
+      accessorKey: "status",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Status" />
+      ),
+    },
+    {
+      accessorKey: "keterangan",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Keterangan" />
+      ),
     },
     {
       id: "actions",
+      header: "Actions",
       cell: ({ row }) => {
         return (
           <DropdownMenu>
@@ -112,7 +166,7 @@ export default function Page() {
                 Copy ID
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setInit(row.original)}>
+              <DropdownMenuItem onClick={() => FormEdit(row.original)}>
                 Edit Data
               </DropdownMenuItem>
               <DropdownMenuItem
@@ -132,27 +186,31 @@ export default function Page() {
 
   return (
     <>
-      <h1 className="text-2xl font-bold col-span-full">Status Dokumen</h1>
+      <h1 className="text-2xl font-bold col-span-full">Status Pegawai</h1>
       <Dialog open={isOpenForm} onOpenChange={setIsOpenForm}>
         <DialogTrigger asChild>
           <Button onClick={() => setIsOpenForm(true)}>Add</Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Form Status Dokumen</DialogTitle>
-            <DialogDescription>Tambahkan data status dokumen</DialogDescription>
-            <FormStatusDokumen
+            <DialogTitle>Form Status Pegawai</DialogTitle>
+            <DialogDescription>Tambahkan data status pegawai</DialogDescription>
+            <FormStatusPegawai
               initialData={init}
               onSuccess={() => {
                 setIsOpenForm(false);
                 setInit({
                   id: null,
+                  periode: new Date(),
                   tahun: new Date().getFullYear(),
                   bulan: "",
-                  id_opd: 0,
+                  id_opd: 3, // RSUD !hardcode
                   nama_opd: "",
-                  berhasil: 0,
-                  tidak_berhasil: 0,
+                  nama: "",
+                  nip: "",
+                  golongan: "",
+                  status: "",
+                  keterangan: "",
                 });
               }}
             />

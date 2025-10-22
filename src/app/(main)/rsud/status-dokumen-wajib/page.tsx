@@ -175,7 +175,8 @@ export default function Page() {
             </DialogDescription>
             <FormStatusDokumenWajib
               initialData={init}
-              onSuccess={() =>
+              onSuccess={() => {
+                setIsOpenForm(false);
                 setInit({
                   id: null,
                   periode: new Date(),
@@ -185,8 +186,8 @@ export default function Page() {
                   nama_opd: "",
                   berhasil: 0,
                   tidak_berhasil: 0,
-                })
-              }
+                });
+              }}
             />
           </DialogHeader>
         </DialogContent>
