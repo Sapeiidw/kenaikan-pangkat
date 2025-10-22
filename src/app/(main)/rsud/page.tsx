@@ -1,41 +1,63 @@
+"use client";
+
 import BarChartCustom from "@/components/chart/BarChart";
 import LineChartCustom from "@/components/chart/LineChart";
 import PieChartCustom from "@/components/chart/PieChart";
+import { MonthPicker } from "@/components/month-picker";
 import { YearPicker } from "@/components/year-picker";
-import { kenaikan_pangkat, status_dokumen_wajib } from "@/db/schema";
-import { db } from "@/lib/db";
-import { eq, sql } from "drizzle-orm";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
-export default async function Page() {
-  const dataKenaikanPangkat = await db
-    .select({
-      label: sql<string>`TRIM(TO_CHAR(periode, 'Month'))`.as("label"),
-      value: sql<number>`SUM(kenaikan_pangkat.value)`.as("value"),
-    })
-    .from(kenaikan_pangkat)
-    .where(eq(kenaikan_pangkat.id_opd, 3))
-    .groupBy(kenaikan_pangkat.periode)
-    .orderBy(kenaikan_pangkat.periode);
+export default function Page() {
+  const [year, setYear] = useState(new Date().getFullYear().toString());
+  const [month, setMonth] = useState((new Date().getMonth() + 1).toString());
 
-  const dataStatusDokumen = await db
-    .select({
-      label: sql<string>`TRIM(TO_CHAR(periode, 'Month'))`.as("label"),
-      berhasil: sql<number>`SUM(status_dokumen_wajib.berhasil)`.as("berhasil"),
-      tidak_berhasil: sql<number>`SUM(status_dokumen_wajib.tidak_berhasil)`.as(
-        "tidak_berhasil"
-      ),
-    })
-    .from(status_dokumen_wajib)
-    .where(eq(status_dokumen_wajib.id_opd, 3))
-    .groupBy(status_dokumen_wajib.periode)
-    .orderBy(status_dokumen_wajib.periode);
+  const { data: dataKenaikanPangkat } = useQuery({
+    queryKey: ["kenaikan-pangkat", year],
+    queryFn: async () =>
+      await fetch(
+        `/api/kenaikan-pangkat?for=dashboard&id_opd=3&year=${year}`
+      ).then((res) => res.json()),
+  });
+
+  const { data: dataStatusDokumen } = useQuery({
+    queryKey: ["status-dokumen-wajib", year],
+    queryFn: async () =>
+      await fetch(
+        `/api/status-dokumen-wajib?for=dashboard&id_opd=3&year=${year}`
+      ).then((res) => res.json()),
+  });
+
+  const { data: dataStatusPegawai } = useQuery({
+    queryKey: ["status-pegawai", year],
+    queryFn: async () =>
+      await fetch(
+        `/api/status-pegawai?for=dashboard&id_opd=3&year=${year}`
+      ).then((res) => res.json()),
+  });
+
+  const { data: dataStatusKenaikanPangkat } = useQuery({
+    queryKey: ["status-kenaikan-pangkat", year],
+    queryFn: async () =>
+      await fetch(
+        `/api/status-kenaikan-pangkat?for=dashboard&id_opd=3&year=${year}&month=${month}`
+      ).then((res) => res.json()),
+  });
+  const { data: dataStatusSKKenaikanPangkat } = useQuery({
+    queryKey: ["status-sk-kenaikan-pangkat", year],
+    queryFn: async () =>
+      await fetch(
+        `/api/status-sk-kenaikan-pangkat?for=dashboard&id_opd=3&year=${year}&month=${month}`
+      ).then((res) => res.json()),
+  });
+
   return (
     <>
       <div className="col-span-full bg-white flex justify-between items-center p-4 rounded-2xl shadow">
         <h1 className="text-lg">Tahunan</h1>
-        <YearPicker value={new Date().getFullYear().toString()} />
+        <YearPicker value={year} onChange={setYear} />
       </div>
-      <div className="w-full h-96 col-span-8 bg-white p-4 rounded-2xl shadow">
+      <div className="w-full h-96 col-span-full bg-white p-4 rounded-2xl shadow">
         {dataKenaikanPangkat && (
           <LineChartCustom
             title="Jumlah Kenaikan Pangkat Pegawai"
@@ -43,18 +65,7 @@ export default async function Page() {
           />
         )}
       </div>
-      <div className="w-full h-96 col-span-4 flex justify-center items-center bg-white p-4 rounded-2xl shadow">
-        <PieChartCustom
-          title="Status Kenaikan Pangkat"
-          data={[
-            { label: "Input Berkas", value: 7 },
-            { label: "Berkas Disimpan", value: 2 },
-            { label: "BTS", value: 2 },
-            { label: "Sudah TTD Pertek", value: 4 },
-          ]}
-          field="value"
-        />
-      </div>
+
       <div className="w-full h-96 col-span-full bg-white p-4 rounded-2xl shadow">
         {dataStatusDokumen && (
           <BarChartCustom
@@ -64,9 +75,10 @@ export default async function Page() {
         )}
       </div>
 
-      <div className="col-span-full bg-white flex justify-between items-center p-4 rounded-2xl shadow">
+      <div className="col-span-full bg-white flex items-center p-4 rounded-2xl shadow">
         <h1 className="text-lg">Bulanan</h1>
-        <YearPicker value={new Date().getFullYear().toString()} />
+        <MonthPicker value={month} onChange={setMonth} className="ml-auto" />
+        <YearPicker value={year} onChange={setYear} />
       </div>
 
       <div className="w-full h-100 col-span-4 flex justify-center items-center bg-white p-4 rounded-2xl shadow">
@@ -82,23 +94,14 @@ export default async function Page() {
       <div className="w-full h-100 col-span-4 flex justify-center items-center bg-white p-4 rounded-2xl shadow">
         <PieChartCustom
           title="Status Kenaikan Pangkat"
-          data={[
-            { label: "Input Berkas", value: 7 },
-            { label: "Berkas Disimpan", value: 2 },
-            { label: "BTS", value: 2 },
-            { label: "Sudah TTD Pertek", value: 4 },
-            { label: "TMS", value: 1 },
-          ]}
+          data={dataStatusKenaikanPangkat ?? []}
           field="value"
         />
       </div>
       <div className="w-full h-100 col-span-4 flex justify-center items-center bg-white p-4 rounded-2xl shadow">
         <PieChartCustom
-          title="Status SK Kenaikan Pangkat - Bulan Mei"
-          data={[
-            { label: "Sudah TTD Pertek", value: 15 },
-            { label: "Belum TTD Pertek", value: 3 },
-          ]}
+          title="Status SK Kenaikan Pangkat"
+          data={dataStatusSKKenaikanPangkat ?? []}
           field="value"
         />
       </div>

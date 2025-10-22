@@ -1,8 +1,34 @@
 import { kenaikan_pangkat, opd } from "@/db/schema";
 import { db } from "@/lib/db";
-import { eq, getTableColumns, sql } from "drizzle-orm";
+import { and, eq, getTableColumns, SQL, sql } from "drizzle-orm";
 
-export async function GET() {
+export async function GET(req: Request) {
+  // Construct a URL instance from the request
+  const { searchParams } = new URL(req.url);
+
+  const forParam = searchParams.get("for");
+  const id_opd = searchParams.get("id_opd");
+  const year = searchParams.get("year");
+
+  const conditions: SQL[] = [];
+
+  if (id_opd) conditions.push(eq(kenaikan_pangkat.id_opd, Number(id_opd)));
+  if (year) conditions.push(eq(sql<number>`extract(year from periode)`, year));
+
+  if (forParam === "dashboard") {
+    const data = await db
+      .select({
+        label: sql<string>`TRIM(TO_CHAR(periode, 'Month'))`.as("label"),
+        value: sql<number>`SUM(kenaikan_pangkat.value)`.as("value"),
+      })
+      .from(kenaikan_pangkat)
+      .where(and(...conditions))
+      .groupBy(kenaikan_pangkat.periode)
+      .orderBy(kenaikan_pangkat.periode);
+
+    return Response.json(data);
+  }
+
   const data = await db
     .select({
       ...getTableColumns(kenaikan_pangkat),
@@ -12,6 +38,7 @@ export async function GET() {
     })
     .from(kenaikan_pangkat)
     .leftJoin(opd, eq(kenaikan_pangkat.id_opd, opd.id))
+    .where(and(...conditions))
     .orderBy(kenaikan_pangkat.id);
 
   return Response.json(data);

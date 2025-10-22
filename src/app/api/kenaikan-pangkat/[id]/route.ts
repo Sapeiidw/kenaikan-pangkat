@@ -21,7 +21,7 @@ export async function PUT(
 
   const updated = await db
     .update(kenaikan_pangkat)
-    .set(body)
+    .set({ ...body, periode: new Date(`${body.tahun}-${body.bulan}-01`) })
     .where(eq(kenaikan_pangkat.id, parsedId))
     .returning();
 

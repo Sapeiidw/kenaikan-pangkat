@@ -258,25 +258,6 @@ export function FormStatusKenaikanPangkat({
         />
 
         <FormField
-          name="belum_ttd_pertek"
-          render={({ field }) => (
-            <FormItem className="col-span-full">
-              <FormLabel>Belum TTD Pertek</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  placeholder="0"
-                  {...field}
-                  required
-                  onChange={(e) => field.onChange(e.target.valueAsNumber)}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
           name="tms"
           render={({ field }) => (
             <FormItem className="col-span-full">

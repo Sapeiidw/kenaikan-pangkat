@@ -1,8 +1,40 @@
 import { status_dokumen_wajib, opd } from "@/db/schema";
 import { db } from "@/lib/db";
-import { eq, getTableColumns, sql } from "drizzle-orm";
+import { and, eq, getTableColumns, SQL, sql } from "drizzle-orm";
 
-export async function GET() {
+export async function GET(req: Request) {
+  // Construct a URL instance from the request
+  const { searchParams } = new URL(req.url);
+
+  const forParam = searchParams.get("for");
+  const id_opd = searchParams.get("id_opd");
+  const year = searchParams.get("year");
+
+  const conditions: SQL[] = [];
+
+  if (id_opd) conditions.push(eq(status_dokumen_wajib.id_opd, Number(id_opd)));
+  if (year) conditions.push(eq(sql<number>`extract(year from periode)`, year));
+
+  if (forParam === "dashboard") {
+    const data = await db
+      .select({
+        label: sql<string>`TRIM(TO_CHAR(periode, 'Month'))`.as("label"),
+        berhasil: sql<number>`SUM(status_dokumen_wajib.berhasil)`.as(
+          "berhasil"
+        ),
+        tidak_berhasil:
+          sql<number>`SUM(status_dokumen_wajib.tidak_berhasil)`.as(
+            "tidak_berhasil"
+          ),
+      })
+      .from(status_dokumen_wajib)
+      .where(and(...conditions))
+      .groupBy(status_dokumen_wajib.periode)
+      .orderBy(status_dokumen_wajib.periode);
+
+    return Response.json(data);
+  }
+
   const data = await db
     .select({
       ...getTableColumns(status_dokumen_wajib),
@@ -12,6 +44,7 @@ export async function GET() {
     })
     .from(status_dokumen_wajib)
     .leftJoin(opd, eq(status_dokumen_wajib.id_opd, opd.id))
+    .where(and(...conditions))
     .orderBy(status_dokumen_wajib.id);
 
   return Response.json(data);

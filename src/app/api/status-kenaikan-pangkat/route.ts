@@ -1,8 +1,57 @@
 import { status_kenaikan_pangkat, opd } from "@/db/schema";
 import { db } from "@/lib/db";
-import { eq, getTableColumns, sql } from "drizzle-orm";
+import { and, eq, getTableColumns, SQL, sql } from "drizzle-orm";
 
-export async function GET() {
+export async function GET(req: Request) {
+  // Construct a URL instance from the request
+  const { searchParams } = new URL(req.url);
+
+  const forParam = searchParams.get("for");
+  const id_opd = searchParams.get("id_opd");
+  const year = searchParams.get("year");
+  const month = searchParams.get("month");
+
+  const conditions: SQL[] = [];
+
+  if (id_opd)
+    conditions.push(eq(status_kenaikan_pangkat.id_opd, Number(id_opd)));
+  if (year && month)
+    conditions.push(eq(status_kenaikan_pangkat.periode, `${year}-${month}-01`));
+
+  if (forParam === "dashboard") {
+    const [dataStatusKenaikanPangkat] = await db
+      .select()
+      .from(status_kenaikan_pangkat)
+      .where(and(...conditions))
+      .orderBy(status_kenaikan_pangkat.periode);
+
+    const data = dataStatusKenaikanPangkat
+      ? [
+          {
+            label: "input_berkas",
+            value: dataStatusKenaikanPangkat.input_berkas,
+          },
+          {
+            label: "berkas_disimpan",
+            value: dataStatusKenaikanPangkat.berkas_disimpan,
+          },
+          { label: "bts", value: dataStatusKenaikanPangkat.bts },
+          {
+            label: "sudah_ttd_pertek",
+            value: dataStatusKenaikanPangkat.sudah_ttd_pertek,
+          },
+          { label: "tms", value: dataStatusKenaikanPangkat.tms },
+        ]
+      : [
+          { label: "input_berkas", value: 0 },
+          { label: "berkas_disimpan", value: 0 },
+          { label: "bts", value: 0 },
+          { label: "sudah_ttd_pertek", value: 0 },
+          { label: "tms", value: 0 },
+        ];
+    return Response.json(data);
+  }
+
   const data = await db
     .select({
       ...getTableColumns(status_kenaikan_pangkat),
