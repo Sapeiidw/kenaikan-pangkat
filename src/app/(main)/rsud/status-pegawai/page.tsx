@@ -61,7 +61,7 @@ export default function Page() {
   const { data } = useQuery({
     queryKey: ["status-pegawai"],
     queryFn: async () =>
-      await fetch(`/api/status-pegawai`).then((res) => res.json()),
+      await fetch(`/api/status-pegawai?id_opd=3`).then((res) => res.json()),
   });
 
   const deleteMutation = useMutation({

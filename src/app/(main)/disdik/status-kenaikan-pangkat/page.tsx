@@ -61,7 +61,9 @@ export default function Page() {
   const { data } = useQuery({
     queryKey: ["status-kenaikan-pangkat"],
     queryFn: async () =>
-      await fetch(`/api/status-kenaikan-pangkat`).then((res) => res.json()),
+      await fetch(`/api/status-kenaikan-pangkat?id_opd=2`).then((res) =>
+        res.json()
+      ),
   });
 
   const deleteMutation = useMutation({

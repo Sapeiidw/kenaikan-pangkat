@@ -61,7 +61,7 @@ export default function Page() {
     periode: new Date(),
     tahun: new Date().getFullYear(),
     bulan: "",
-    id_opd: 2, // DISDIK !hardcode
+    id_opd: 1, // DINKES !hardcode
     nama_opd: "",
     sudah_ttd_pertek: 0,
     belum_ttd_pertek: 0,
@@ -72,7 +72,7 @@ export default function Page() {
   const { data } = useQuery({
     queryKey: ["status-sk-kenaikan-pangkat"],
     queryFn: async () =>
-      await fetch(`/api/status-sk-kenaikan-pangkat?id_opd=2`).then((res) =>
+      await fetch(`/api/status-sk-kenaikan-pangkat?id_opd=1`).then((res) =>
         res.json()
       ),
   });
@@ -203,7 +203,7 @@ export default function Page() {
                   periode: new Date(),
                   tahun: new Date().getFullYear(),
                   bulan: "",
-                  id_opd: 2, // DISDIK !hardcode
+                  id_opd: 1, // DINKES !hardcode
                   nama_opd: "",
                   sudah_ttd_pertek: 0,
                   belum_ttd_pertek: 0,

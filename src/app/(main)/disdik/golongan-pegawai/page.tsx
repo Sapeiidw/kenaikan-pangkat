@@ -59,7 +59,7 @@ export default function Page() {
   const { data } = useQuery({
     queryKey: ["golongan-pegawai"],
     queryFn: async () =>
-      await fetch(`/api/golongan-pegawai`).then((res) => res.json()),
+      await fetch(`/api/golongan-pegawai?id_opd=2`).then((res) => res.json()),
   });
 
   const deleteMutation = useMutation({

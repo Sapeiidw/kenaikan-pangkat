@@ -55,7 +55,9 @@ export default function Page() {
   const { data } = useQuery({
     queryKey: ["status-dokumen-wajib"],
     queryFn: async () =>
-      await fetch(`/api/status-dokumen-wajib`).then((res) => res.json()),
+      await fetch(`/api/status-dokumen-wajib?id_opd=3`).then((res) =>
+        res.json()
+      ),
   });
 
   const deleteMutation = useMutation({

@@ -59,31 +59,70 @@ const data = {
     {
       title: "Disdik",
       url: "#",
-      icon: SquareTerminal,
-      isActive: true,
+      icon: BookOpen,
       items: [
         {
           title: "Dashboard",
           url: "/disdik",
         },
         {
-          title: "Tambah Data",
-          url: "/disdik/tambah-data",
+          title: "Kenaikan Pangkat",
+          url: "/disdik/kenaikan-pangkat",
+        },
+        {
+          title: "Status Dokumen Wajib",
+          url: "/disdik/status-dokumen-wajib",
+        },
+        {
+          title: "Golongan Pegawai",
+          url: "/disdik/golongan-pegawai",
+        },
+        {
+          title: "Status SK Kenpa",
+          url: "/disdik/status-sk-kenaikan-pangkat",
+        },
+        {
+          title: "Status Kenaikan Pangkat",
+          url: "/disdik/status-kenaikan-pangkat",
+        },
+        {
+          title: "Status Pegawai",
+          url: "/disdik/status-pegawai",
         },
       ],
     },
     {
       title: "Dinkes",
       url: "#",
-      icon: Bot,
+      icon: BookOpen,
       items: [
         {
           title: "Dashboard",
           url: "/dinkes",
         },
         {
-          title: "Tambah Data",
-          url: "/dinkes/tambah-data",
+          title: "Kenaikan Pangkat",
+          url: "/dinkes/kenaikan-pangkat",
+        },
+        {
+          title: "Status Dokumen Wajib",
+          url: "/dinkes/status-dokumen-wajib",
+        },
+        {
+          title: "Golongan Pegawai",
+          url: "/dinkes/golongan-pegawai",
+        },
+        {
+          title: "Status SK Kenpa",
+          url: "/dinkes/status-sk-kenaikan-pangkat",
+        },
+        {
+          title: "Status Kenaikan Pangkat",
+          url: "/dinkes/status-kenaikan-pangkat",
+        },
+        {
+          title: "Status Pegawai",
+          url: "/dinkes/status-pegawai",
         },
       ],
     },

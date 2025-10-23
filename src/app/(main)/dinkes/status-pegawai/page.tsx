@@ -2,7 +2,7 @@
 
 import { DataTableColumnHeader } from "@/components/data-table/column-header";
 import { DataTable } from "@/components/data-table/data-table";
-import { FormStatusSKKenaikanPangkat } from "@/components/form/status-sk-kenaikan-pangkat";
+import { FormStatusPegawai } from "@/components/form/status-pegawai";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -27,60 +27,47 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 export default function Page() {
-  // Golongan Pangkat
-  // I,II , III, IV
-  // Form
-  // tahun bulan opd jumlah I II III IV
-  //
-  // Status SK Kenpa
-  // tahun bulan opd sudah ttd, belum ttd
-  //
-  // Status Kenaikan Pangkat
-  // tahun bulan opd input berkas, berkas disimpan, bts, sudah ttd pertek, tms
-  //
-  // Status Pegawai
-  // nama, nip, golongan (I,II,III,IV) abcd, status (diterima, tms, berkas verif, menunggu ttd, sudah ttd), keterangan
-  //
-  // Golongan Pangkat
-  // IA, IIA, IIIA, IVA
-
-  type StatusSKKenaikanPangkat = {
+  type StatusPegawai = {
     id: number | null;
     periode: Date;
     tahun: number;
     bulan: string;
     id_opd: number;
     nama_opd: string;
-    sudah_ttd_pertek: number;
-    belum_ttd_pertek: number;
+    nama: string;
+    nip: string;
+    golongan: string;
+    status: string;
+    keterangan: string;
   };
 
   const [isOpenForm, setIsOpenForm] = useState(false);
-  const [init, setInit] = useState<StatusSKKenaikanPangkat>({
+  const [init, setInit] = useState<StatusPegawai>({
     id: null,
     periode: new Date(),
     tahun: new Date().getFullYear(),
     bulan: "",
-    id_opd: 2, // DISDIK !hardcode
+    id_opd: 1, // DINKES !hardcode
     nama_opd: "",
-    sudah_ttd_pertek: 0,
-    belum_ttd_pertek: 0,
+    nama: "",
+    nip: "",
+    golongan: "",
+    status: "",
+    keterangan: "",
   });
 
   const queryClient = useQueryClient();
 
   const { data } = useQuery({
-    queryKey: ["status-sk-kenaikan-pangkat"],
+    queryKey: ["status-pegawai"],
     queryFn: async () =>
-      await fetch(`/api/status-sk-kenaikan-pangkat?id_opd=2`).then((res) =>
-        res.json()
-      ),
+      await fetch(`/api/status-pegawai?id_opd=1`).then((res) => res.json()),
   });
 
   const deleteMutation = useMutation({
-    mutationKey: ["delete-status-sk-kenaikan-pangkat"],
+    mutationKey: ["delete-status-pegawai"],
     mutationFn: async () => {
-      const res = await fetch(`/api/status-sk-kenaikan-pangkat/${init.id}`, {
+      const res = await fetch(`/api/status-pegawai/${init.id}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed to delete");
@@ -89,7 +76,7 @@ export default function Page() {
     onSuccess: () => {
       toast.success("Data berhasil dihapus");
       queryClient.invalidateQueries({
-        queryKey: ["status-sk-kenaikan-pangkat"],
+        queryKey: ["status-pegawai"],
       });
     },
     onError: () => {
@@ -97,12 +84,12 @@ export default function Page() {
     },
   });
 
-  const FormEdit = (data: StatusSKKenaikanPangkat) => {
+  const FormEdit = (data: StatusPegawai) => {
     setIsOpenForm(true);
     setInit({ ...data, periode: new Date(data.periode) });
   };
 
-  const columns: ColumnDef<StatusSKKenaikanPangkat>[] = [
+  const columns: ColumnDef<StatusPegawai>[] = [
     {
       accessorKey: "tahun",
       header: ({ column }) => (
@@ -130,15 +117,33 @@ export default function Page() {
       ),
     },
     {
-      accessorKey: "sudah_ttd_pertek",
+      accessorKey: "nama",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Sudah TTD" />
+        <DataTableColumnHeader column={column} title="Nama" />
       ),
     },
     {
-      accessorKey: "belum_ttd_pertek",
+      accessorKey: "nip",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Belum TTD" />
+        <DataTableColumnHeader column={column} title="NIP" />
+      ),
+    },
+    {
+      accessorKey: "golongan",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Golongan" />
+      ),
+    },
+    {
+      accessorKey: "status",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Status" />
+      ),
+    },
+    {
+      accessorKey: "keterangan",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Keterangan" />
       ),
     },
     {
@@ -181,20 +186,16 @@ export default function Page() {
 
   return (
     <>
-      <h1 className="text-2xl font-bold col-span-full">
-        Status SK Kenaikan Pangkat
-      </h1>
+      <h1 className="text-2xl font-bold col-span-full">Status Pegawai</h1>
       <Dialog open={isOpenForm} onOpenChange={setIsOpenForm}>
         <DialogTrigger asChild>
           <Button onClick={() => setIsOpenForm(true)}>Add</Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Form Status SK Kenaikan Pangkat</DialogTitle>
-            <DialogDescription>
-              Tambahkan data status sk kenaikan pangkat
-            </DialogDescription>
-            <FormStatusSKKenaikanPangkat
+            <DialogTitle>Form Status Pegawai</DialogTitle>
+            <DialogDescription>Tambahkan data status pegawai</DialogDescription>
+            <FormStatusPegawai
               initialData={init}
               onSuccess={() => {
                 setIsOpenForm(false);
@@ -203,10 +204,13 @@ export default function Page() {
                   periode: new Date(),
                   tahun: new Date().getFullYear(),
                   bulan: "",
-                  id_opd: 2, // DISDIK !hardcode
+                  id_opd: 1, // DINKES !hardcode
                   nama_opd: "",
-                  sudah_ttd_pertek: 0,
-                  belum_ttd_pertek: 0,
+                  nama: "",
+                  nip: "",
+                  golongan: "",
+                  status: "",
+                  keterangan: "",
                 });
               }}
             />
