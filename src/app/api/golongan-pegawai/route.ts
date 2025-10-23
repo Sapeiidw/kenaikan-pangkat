@@ -1,8 +1,41 @@
 import { golongan_pegawai, opd } from "@/db/schema";
 import { db } from "@/lib/db";
-import { eq, getTableColumns, sql } from "drizzle-orm";
+import { and, eq, getTableColumns, SQL, sql } from "drizzle-orm";
 
-export async function GET() {
+export async function GET(req: Request) {
+  // Construct a URL instance from the request
+  const { searchParams } = new URL(req.url);
+
+  const forParam = searchParams.get("for");
+  const id_opd = searchParams.get("id_opd");
+  const year = searchParams.get("year");
+  const month = searchParams.get("month");
+
+  const conditions: SQL[] = [];
+
+  if (id_opd) conditions.push(eq(golongan_pegawai.id_opd, Number(id_opd)));
+  if (year && month)
+    conditions.push(eq(golongan_pegawai.periode, `${year}-${month}-01`));
+
+  if (forParam === "dashboard") {
+    const [dataGolonganPegawai] = await db
+      .select()
+      .from(golongan_pegawai)
+      .where(and(...conditions))
+      .orderBy(golongan_pegawai.periode);
+
+    const data = dataGolonganPegawai
+      ? [
+          { label: "Golongan I", value: dataGolonganPegawai.golongan_i },
+          { label: "Golongan II", value: dataGolonganPegawai.golongan_ii },
+          { label: "Golongan III", value: dataGolonganPegawai.golongan_iii },
+          { label: "Golongan IV", value: dataGolonganPegawai.golongan_iv },
+        ]
+      : [];
+
+    return Response.json(data);
+  }
+
   const data = await db
     .select({
       ...getTableColumns(golongan_pegawai),
