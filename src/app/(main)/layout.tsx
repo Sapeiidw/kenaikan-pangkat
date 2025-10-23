@@ -1,3 +1,4 @@
+"use client";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
@@ -14,12 +15,16 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Protect } from "@clerk/nextjs";
+import { usePathname } from "next/navigation";
 
 export default function MainLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname(); // e.g. "/dashboard/users/123/edit"
+  const segments = pathname.split("/").filter(Boolean); // ["dashboard", "users", "123", "edit"]
+
   return (
     <Protect fallback={<div>Loading...</div>}>
       <SidebarProvider>
@@ -34,15 +39,30 @@ export default function MainLayout({
               />
               <Breadcrumb className="sticky top-0">
                 <BreadcrumbList>
-                  <BreadcrumbItem className="hidden md:block">
-                    <BreadcrumbLink href="#">
-                      Building Your Application
-                    </BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator className="hidden md:block" />
-                  <BreadcrumbItem>
+                  {segments.map((segment, i) => (
+                    <>
+                      <BreadcrumbItem className="hidden md:block capitalize">
+                        {i === segments.length - 1 ? (
+                          <BreadcrumbPage>
+                            {segment.replace("-", " ")}
+                          </BreadcrumbPage>
+                        ) : (
+                          <BreadcrumbLink
+                            key={segment}
+                            href={`/${segments.slice(0, i + 1).join("/")}`}
+                          >
+                            {segment.replace("-", " ")}
+                          </BreadcrumbLink>
+                        )}
+                      </BreadcrumbItem>
+                      {i !== segments.length - 1 && (
+                        <BreadcrumbSeparator className="hidden md:block" />
+                      )}
+                    </>
+                  ))}
+                  {/* <BreadcrumbItem>
                     <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                  </BreadcrumbItem>
+                  </BreadcrumbItem> */}
                 </BreadcrumbList>
               </Breadcrumb>
             </div>
