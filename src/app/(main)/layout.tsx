@@ -41,7 +41,10 @@ export default function MainLayout({
                 <BreadcrumbList>
                   {segments.map((segment, i) => (
                     <>
-                      <BreadcrumbItem className="hidden md:block capitalize">
+                      <BreadcrumbItem
+                        className="hidden md:block capitalize"
+                        key={segment}
+                      >
                         {i === segments.length - 1 ? (
                           <BreadcrumbPage>
                             {segment.replace("-", " ")}
