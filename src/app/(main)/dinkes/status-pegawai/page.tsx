@@ -196,7 +196,12 @@ export default function Page() {
       <h1 className="text-2xl font-bold col-span-full">Status Pegawai</h1>
       <Dialog open={isOpenForm} onOpenChange={setIsOpenForm}>
         <DialogTrigger asChild>
-          <Button onClick={() => setIsOpenForm(true)}>Add</Button>
+          <Button
+            onClick={() => setIsOpenForm(true)}
+            disabled={user.sessionClaims?.role !== "admin"}
+          >
+            Add
+          </Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
