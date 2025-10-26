@@ -11,6 +11,7 @@ import {
   PieChart,
   Settings2,
   SquareTerminal,
+  User,
 } from "lucide-react";
 import * as React from "react";
 
@@ -30,6 +31,7 @@ import {
 import { cn } from "@/lib/utils";
 import { UserButton } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
+import { NavSetting } from "./nav-setting";
 
 // This is sample data.
 const data = {
@@ -162,23 +164,13 @@ const data = {
       ],
     },
   ],
-  // projects: [
-  //   {
-  //     name: "Design Engineering",
-  //     url: "#",
-  //     icon: Frame,
-  //   },
-  //   {
-  //     name: "Sales & Marketing",
-  //     url: "#",
-  //     icon: PieChart,
-  //   },
-  //   {
-  //     name: "Travel",
-  //     url: "#",
-  //     icon: Map,
-  //   },
-  // ],
+  setting: [
+    {
+      name: "User",
+      url: "/user",
+      icon: User,
+    },
+  ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -225,7 +217,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navWithActive} />
-        {/* <NavProjects projects={data.projects} /> */}
+        <NavSetting data={data.setting} />
       </SidebarContent>
       <SidebarFooter>
         {/* <SidebarMenu>
