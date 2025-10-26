@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Protect } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
+import { Fragment } from "react";
 
 export default function MainLayout({
   children,
@@ -40,18 +41,14 @@ export default function MainLayout({
               <Breadcrumb className="sticky top-0">
                 <BreadcrumbList>
                   {segments.map((segment, i) => (
-                    <>
-                      <BreadcrumbItem
-                        className="hidden md:block capitalize"
-                        key={segment}
-                      >
+                    <Fragment key={segment}>
+                      <BreadcrumbItem className="hidden md:block capitalize">
                         {i === segments.length - 1 ? (
                           <BreadcrumbPage>
                             {segment.replace("-", " ")}
                           </BreadcrumbPage>
                         ) : (
                           <BreadcrumbLink
-                            key={segment}
                             href={`/${segments.slice(0, i + 1).join("/")}`}
                           >
                             {segment.replace("-", " ")}
@@ -61,7 +58,7 @@ export default function MainLayout({
                       {i !== segments.length - 1 && (
                         <BreadcrumbSeparator className="hidden md:block" />
                       )}
-                    </>
+                    </Fragment>
                   ))}
                   {/* <BreadcrumbItem>
                     <BreadcrumbPage>Data Fetching</BreadcrumbPage>

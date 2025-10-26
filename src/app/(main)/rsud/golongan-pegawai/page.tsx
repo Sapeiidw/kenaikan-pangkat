@@ -26,7 +26,10 @@ import { MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { useAuth } from "@clerk/nextjs";
+
 export default function Page() {
+  const user = useAuth();
   type GolonganPangkat = {
     id: number | null;
     periode: Date;
@@ -158,10 +161,14 @@ export default function Page() {
                 Copy ID
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => FormEdit(row.original)}>
+              <DropdownMenuItem
+                onClick={() => FormEdit(row.original)}
+                disabled={user.sessionClaims?.role !== "admin"}
+              >
                 Edit Data
               </DropdownMenuItem>
               <DropdownMenuItem
+                disabled={user.sessionClaims?.role !== "admin"}
                 onClick={() => {
                   setInit(row.original);
                   deleteMutation.mutate();

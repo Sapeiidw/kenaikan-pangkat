@@ -14,6 +14,8 @@ export function Provider({ children }: { children: ReactNode }) {
       appearance={{
         cssLayerName: "clerk",
       }}
+      signInUrl="/sign-in"
+      signUpUrl="/sign-up"
     >
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </ClerkProvider>

@@ -15,35 +15,32 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z4 from "zod/v4";
+import { YearPicker } from "../year-picker";
+import { MonthPicker } from "../month-picker";
 
 export const formSchema = z4.object({
   id: z4.number().nullish(), // Add optional id for update
+  periode: z4.date(),
   tahun: z4.coerce.number<number>().min(1945, "Minimal tahun 1945"),
   bulan: z4.string().min(1, "Bulan tidak boleh kosong"),
   id_opd: z4.coerce.number<number>().min(1, "OPD harus dipilih"),
-  berhasil: z4.coerce.number<number>().min(0),
-  tidak_berhasil: z4.coerce.number<number>().min(0),
+  value: z4.coerce.number<number>().min(0),
 });
 
 type FormData = z4.infer<typeof formSchema>;
 
-interface FormStatusDokumenProps {
+interface FormUserProps {
   initialData?: FormData; // pass this if editing
   onSuccess?: () => void; // callback after successful submission
 }
 
-export function FormStatusDokumen({
-  initialData,
-  onSuccess,
-}: FormStatusDokumenProps) {
+export function FormUser({ initialData, onSuccess }: FormUserProps) {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: async (data: FormData) => {
       const method = data.id ? "PUT" : "POST";
-      const url = data.id
-        ? `/api/status-dokumen/${data.id}`
-        : "/api/status-dokumen";
+      const url = data.id ? `/api/user/${data.id}` : "/api/user";
 
       const response = await fetch(url, {
         method,
@@ -60,7 +57,9 @@ export function FormStatusDokumen({
     onSuccess: () => {
       toast.success(initialData ? "Update berhasil!" : "Data berhasil dibuat!");
       form.reset();
-      queryClient.invalidateQueries({ queryKey: ["status-dokumen"] });
+      queryClient.invalidateQueries({
+        queryKey: ["user"],
+      });
       onSuccess?.();
     },
     onError: () => {
@@ -71,11 +70,11 @@ export function FormStatusDokumen({
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
-      tahun: new Date().getFullYear(),
+      periode: new Date(),
+      tahun: 0,
       bulan: "",
       id_opd: 0,
-      berhasil: 0,
-      tidak_berhasil: 0,
+      value: 0,
     },
   });
 
@@ -92,6 +91,7 @@ export function FormStatusDokumen({
   });
 
   const onSubmit = (data: FormData) => {
+    console.log(data, "data");
     mutation.mutate(data);
   };
 
@@ -99,52 +99,22 @@ export function FormStatusDokumen({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6 mx-auto bg-white p-6 rounded-md shadow w-full"
+        className="space-y-6 mx-auto w-full grid grid-cols-12 gap-x-4"
       >
         {/* Hidden ID field for updates */}
         {initialData?.id && <input type="hidden" {...form.register("id")} />}
 
         <FormField
-          name="tahun"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Tahun</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  placeholder="Contoh: 2025"
-                  {...field}
-                  onChange={(e) => field.onChange(e.target.valueAsNumber)}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          name="bulan"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Bulan</FormLabel>
-              <FormControl>
-                <Input placeholder="Contoh: Januari" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
           control={form.control}
           name="id_opd"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="col-span-full">
               <FormLabel>OPD</FormLabel>
               <FormControl>
                 <select
                   {...field}
                   className="w-full rounded border px-3 py-2 text-sm"
+                  disabled={!!initialData!.id_opd}
                 >
                   <option value="">Pilih OPD</option>
                   {dataOpd &&
@@ -163,12 +133,17 @@ export function FormStatusDokumen({
         />
 
         <FormField
-          name="berhasil"
+          name="tahun"
+          control={form.control}
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Berhasil</FormLabel>
+            <FormItem className="col-span-full">
+              <FormLabel>Tahun</FormLabel>
               <FormControl>
-                <Input type="number" placeholder="0" {...field} />
+                <YearPicker
+                  className="w-full"
+                  value={field.value.toString() ?? ""}
+                  onChange={field.onChange}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -176,23 +151,60 @@ export function FormStatusDokumen({
         />
 
         <FormField
-          name="tidak_berhasil"
+          name="bulan"
+          control={form.control}
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Tidak Berhasil</FormLabel>
+            <FormItem className="col-span-full">
+              <FormLabel>Bulan</FormLabel>
               <FormControl>
-                <Input type="number" placeholder="0" {...field} />
+                <MonthPicker
+                  className="w-full"
+                  value={field.value ? String(field.value) : ""}
+                  onChange={(v) => field.onChange(v)}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={mutation.isPending}>
+
+        <FormField
+          name="value"
+          render={({ field }) => (
+            <FormItem className="col-span-full">
+              <FormLabel>Kenaikan Pangkat</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  placeholder="0"
+                  {...field}
+                  required
+                  onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <Button
+          className="col-span-6"
+          type="submit"
+          disabled={mutation.isPending}
+        >
           {mutation.isPending
             ? initialData
               ? "Menyimpan..."
               : "Membuat..."
             : "Simpan"}
+        </Button>
+        <Button
+          className="col-span-6"
+          type="reset"
+          onClick={() => form.reset()}
+          variant={"destructive"}
+        >
+          Reset
         </Button>
       </form>
     </Form>

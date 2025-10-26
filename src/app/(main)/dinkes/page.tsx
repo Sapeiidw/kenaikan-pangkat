@@ -11,7 +11,10 @@ import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
 
+import { useAuth } from "@clerk/nextjs";
+
 export default function Page() {
+  const user = useAuth();
   const [year, setYear] = useState(new Date().getFullYear().toString());
   const [month, setMonth] = useState((new Date().getMonth() + 1).toString());
 
