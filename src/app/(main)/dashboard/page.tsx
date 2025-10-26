@@ -14,10 +14,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 
-import { useAuth } from "@clerk/nextjs";
-
 export default function Page() {
-  const user = useAuth();
   return (
     <SidebarProvider>
       <AppSidebar />
