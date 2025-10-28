@@ -38,7 +38,7 @@ export default function Page() {
 
   // Status Kenaikan Pangkat
   const { data: dataStatusKenaikanPangkat } = useQuery({
-    queryKey: ["status-kenaikan-pangkat", year],
+    queryKey: ["status-kenaikan-pangkat", year, month],
     queryFn: async () =>
       await fetch(
         `/api/status-kenaikan-pangkat?for=dashboard&id_opd=3&year=${year}&month=${month}`
@@ -47,7 +47,7 @@ export default function Page() {
 
   // Status SK Kenaikan Pangkat
   const { data: dataStatusSKKenaikanPangkat } = useQuery({
-    queryKey: ["status-sk-kenaikan-pangkat", year],
+    queryKey: ["status-sk-kenaikan-pangkat", year, month],
     queryFn: async () =>
       await fetch(
         `/api/status-sk-kenaikan-pangkat?for=dashboard&id_opd=3&year=${year}&month=${month}`
@@ -56,19 +56,19 @@ export default function Page() {
 
   // Golongan Pegawai
   const { data: dataGolonganPegawai } = useQuery({
-    queryKey: ["golongan-pegawai", year],
+    queryKey: ["golongan-pegawai", year, month],
     queryFn: async () =>
       await fetch(
-        `/api/golongan-pegawai?for=dashboard&id_opd=3&year=${year}`
+        `/api/golongan-pegawai?for=dashboard&id_opd=3&year=${year}&month=${month}`
       ).then((res) => res.json()),
   });
 
   // Status Pegawai
   const { data: dataStatusPegawai } = useQuery({
-    queryKey: ["status-pegawai", year],
+    queryKey: ["status-pegawai", year, month],
     queryFn: async () =>
       await fetch(
-        `/api/status-pegawai?for=dashboard&id_opd=3&year=${year}`
+        `/api/status-pegawai?for=dashboard&id_opd=3&year=${year}&month=${month}`
       ).then((res) => res.json()),
   });
 
