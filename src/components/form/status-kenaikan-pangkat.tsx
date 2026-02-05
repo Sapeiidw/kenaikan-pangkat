@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -98,11 +98,6 @@ export function FormStatusKenaikanPangkat({
     }
   }, [initialData, form]);
 
-  const { data: dataOpd } = useQuery({
-    queryKey: ["opd"],
-    queryFn: async () => await fetch(`/api/opd`).then((res) => res.json()),
-  });
-
   const onSubmit = (data: FormData) => {
     console.log(data, "data");
     mutation.mutate(data);
@@ -117,33 +112,7 @@ export function FormStatusKenaikanPangkat({
         {/* Hidden ID field for updates */}
         {initialData?.id && <input type="hidden" {...form.register("id")} />}
 
-        <FormField
-          control={form.control}
-          name="id_opd"
-          render={({ field }) => (
-            <FormItem className="col-span-full">
-              <FormLabel>OPD</FormLabel>
-              <FormControl>
-                <select
-                  {...field}
-                  className="w-full rounded border px-3 py-2 text-sm"
-                  disabled={!!initialData!.id_opd}
-                >
-                  <option value="">Pilih OPD</option>
-                  {dataOpd &&
-                    dataOpd.map(
-                      (opd: { id: number; nama: string; singatan: string }) => (
-                        <option key={opd.id} value={opd.id}>
-                          {opd.nama}
-                        </option>
-                      )
-                    )}
-                </select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <input type="hidden" {...form.register("id_opd")} />
 
         <FormField
           name="tahun"
@@ -290,7 +259,7 @@ export function FormStatusKenaikanPangkat({
         <Button
           className="col-span-6"
           type="reset"
-          onClick={() => form.reset()}
+          onClick={() => form.reset(initialData)}
           variant={"destructive"}
         >
           Reset

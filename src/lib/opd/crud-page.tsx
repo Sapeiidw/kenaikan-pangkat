@@ -20,7 +20,7 @@ import {
 import { useAuth } from "@clerk/nextjs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 interface ColumnConfig {
@@ -72,6 +72,11 @@ export function CrudPage<T extends BaseEntity>({
 
   const [isOpenForm, setIsOpenForm] = useState(false);
   const [currentData, setCurrentData] = useState<T>(createDefaultEntity);
+
+  // Reset currentData when opdId changes to ensure id_opd is always correct
+  useEffect(() => {
+    setCurrentData(createDefaultEntity());
+  }, [opdId, createDefaultEntity]);
 
   const queryClient = useQueryClient();
 
@@ -136,7 +141,13 @@ export function CrudPage<T extends BaseEntity>({
       <h1 className="text-2xl font-bold col-span-full">{title}</h1>
       <Dialog open={isOpenForm} onOpenChange={setIsOpenForm}>
         <DialogTrigger asChild>
-          <Button onClick={() => setIsOpenForm(true)} disabled={!isAdmin}>
+          <Button
+            onClick={() => {
+              setCurrentData(createDefaultEntity());
+              setIsOpenForm(true);
+            }}
+            disabled={!isAdmin}
+          >
             Add
           </Button>
         </DialogTrigger>
